@@ -30,14 +30,6 @@ The Hegemony Manifesto
 ***** Avatar spawning
       All avatars are drawn from populations; tighter connections to a
       population allow the generation of more highly specialized avatars.
-** Locations
-*** Habitable Celestials
-    Large, indigenous populations
-*** Colonies
-    Small but self-sufficient outposts
-*** Space Stations
-    Highly dependent orbiting bases, always linked to a parent
-    habitiable celestial or colony. 
 ** Spacecraft
    The key to conquest and trade
 *** Travel
@@ -56,46 +48,13 @@ The Hegemony Manifesto
     
 ** Manufacturing
    "Who do you think makes your ammo" -j4g
-
-
-
-* Worlds are the sum of geographically discrete nodes
-
-Hegemony is played on clestial satellites, represented by spherical maps. The maps are sectioned into population nodes, georgraphically distributed according to the coordinates of a subdivided icosahedron. Each population, therefore, exists on a single node, which is controlled by a zero or one player characters.
-
-Those who play hegemony vie for regional, or even global, dominance by placing characters they control as governors of population nodes. Populations are only interested only in their own state of affairs; they are agnostic to the regional and global ties of their governors.
-
-----
-
-Regional nodes may contain untapped resources, and can store stockpiles of resources, goods, and a standing military. These are owned by the local populace, but their usage is directed by the player-character governor.
-
-Resources, goods, and military units can only move between adjacent nodes, and cannot exceed the storage capacity of a node. Cooperating adjacent governors can trade, while adverse adjacent governors may attempt to invade.
-
-----
-
-Player characters need not be governors, and need not reside in nodes controlled by a governor owned by the same player. All characters, governors included, have the ability to benefit or augment the resources, production, military, and even characteristics of the population. 
-
-These booster effects are gained through event experience, forcing players to develop their characters in strategic ways. Players can use characters to assist governors that they may or may not own. In this way, hegemony becomes a game of connections, and who you know becomes extremely important.
-
-----
-
-Natural Resources
-
-Common ores (think: metals)
-Rare minerals (think: silicon)
-Fuel (think: oil)
-Food
-
-The distribution of natrual resources 
-
-Militaries, industries, and populations themselves have upkeep costs. Insufficient resources imposes hard limits on military size and production, and will make populations less efficient and more difficult to govern. Specialist characters may be required to take advantage of certain classes of resources
-
-----
-
-
-
-
-    
-    
-    
-    
+** Locations
+   
+   |                  | Lush World   | Barren World | Asteroids | Orbital Stations |
+   |------------------+--------------+--------------+-----------+------------------|
+   | Population Class | Large        | Medium       | Small     | Small            |
+   |                  | sustaintable | depdendent   | dependent | dependent        |
+   |------------------+--------------+--------------+-----------+------------------|
+   | Resources        | Food/Water   | Fuels        | Minerals  | Specialists      |
+   | (by comparative  | Conscription |              |           |                  |
+   | advantage)       |              |              |           |                  |

@@ -18,12 +18,15 @@ The Hegemony Manifesto
 ** Populations
    Populations are collections of NPCs; permanent residents.
 ** Locations
-*** Surface
-**** Habitable
-**** Nonhabitable
-*** Space
-
-
+   
+   |                  | Lush World   | Barren World | Asteroids | Orbital Stations |
+   |------------------+--------------+--------------+-----------+------------------|
+   | Population Class | Large        | Medium       | Small     | Small            |
+   |                  | sustaintable | depdendent   | dependent | dependent        |
+   |------------------+--------------+--------------+-----------+------------------|
+   | Resources        | Food/Water   | Fuels        | Minerals  | Specialists      |
+   | (by comparative  | Conscription |              |           |                  |
+   | advantage)       |              |              |           |                  |
 
 
 * Hegemony centers around populations
@@ -148,4 +151,5 @@ Militaries, industries, and populations themselves have upkeep costs. Insufficie
 *** Political/influential
 
     Money sinks - passively manipulate influence
+    
     

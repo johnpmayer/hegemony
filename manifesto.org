@@ -1,4 +1,5 @@
 The Hegemony Manifesto
+
 * Table of Contents
 ** Avatars
    Avatars are the player-controlled characters in hegemony. 
@@ -6,31 +7,57 @@ The Hegemony Manifesto
     Players own and control any number of avatars.
     Concievably, avatars can be transferred between players.
 *** Permanent Death
-    Avatars can be killed.
-**** Vulnerability
-     Certain actions require that the avatar be exposed to danger
-
+    Avatars can be killed; certain actions require that the avatar be
+    exposed to danger
 *** Capabilities
-**** Asset Control
-***** Piloting
-      Spacecraft require one or more avatars to operate
-***** 
-** Populations
-   Populations are collections of NPCs; permanent residents.
+**** Warehousing
+     Populations provide storage services, subject to rent based on
+     standings
+**** Manufacturing
+     See further discussion.
+**** Piloting
+     Spacecraft require one or more avatars to operate
+**** Troop command
+     NPC ground forces can be controlled only by avatars with the
+     requisite leadership credentials. 
+**** Population interaction
+***** Commerce
+      Populations have specific needs, and fulfilling them can be
+      financially lucrative and will lead to stronger connections.
+***** Politics
+      Become a member of the permanent population - winning elections
+      helps grant control over the local treasury.
+***** Avatar spawning
+      All avatars are drawn from populations; tighter connections to a
+      population allow the generation of more highly specialized avatars.
 ** Locations
-*** Surface
-**** Habitable
-**** Nonhabitable
-*** Space
+*** Habitable Celestials
+    Large, indigenous populations
+*** Colonies
+    Small but self-sufficient outposts
+*** Space Stations
+    Highly dependent orbiting bases, always linked to a parent
+    habitiable celestial or colony. 
+** Spacecraft
+   The key to conquest and trade
+*** Travel
+    Travel time is non-trivial; thus moving assets is a commitment
+    with consequences.
+*** Battles
+** Ground Units
+   Not all battles are won in space
+*** Conscription
+    Drawn from the population at a initial cost in proportion to
+    abilities and experience
+*** Upgrades
+    Develop finely tuned specialists or versatile commandos at a cost
+    of experience points and capital.
+*** Battles
+    
+** Manufacturing
+   "Who do you think makes your ammo" -j4g
 
 
-
-
-* Hegemony centers around populations
-
-Populations are the substitute for traditional NPCs. Player characters are drawn from populations, starting at the lowest level with no reputation and relative anonymity.
-
-----
 
 * Worlds are the sum of geographically discrete nodes
 
@@ -66,86 +93,9 @@ Militaries, industries, and populations themselves have upkeep costs. Insufficie
 ----
 
 
-* Getting back on topic...
-  
-  The whole governor's idea is a bit restrictive, so i'm going to list some key features i want to see of this game
-  
-** Passive play
-   
-   Players own a practically unbounded number of characters. Characters have assets, and assets grant a range 
-   abilities and actions.
-   
-   Players manipulate the game state via a real-time API. The number of connections is unbounded; players can
-   manage more characters concurrently to do more things. In this way, players can experience the simulation at
-   a strategic level, and can automate different processes. On the other hand, the rate of commands sent by clients
-   can be throttled.
-   
-
-** Assets
-
-   Distinct concepts of ownership and permissions. Characters can grant/revoke asset usage to other characters.
-   
-*** Units
-    
-    Capital ships, fleets, ground platoons. Maybe they require some sort of experience to use effectively, but there
-    shouldn't be a grind to acquire skills - rather, new characters with different types of experience can be earned
-    from populations.
-    
-*** Structures
-    
-    Ground and space. Always vulnerable, but can use a civ-like garrison mechanic.
-    
-*** Resources
-
-    Stored in structures, everything in industry is built here.
 
 
-
-** Populations
-
-   Populations are the source for new characters. The type of civilization, it's health/happiness, and its standings 
-   toward the character determine the types of new characters that a player can acquire.
-
-   The simulation here is going to be insane.
-
-*** Ground
-
-    Naturally occuring in the game, planets or moons have large native populations. New players can easily spawn
-    a fair number of low-skill characters from planetary populations. Older players can spend more time increasing
-    favor to get access to rare specialists.
-
-    Military Nation
-    Technologist Utopia
-    Slaver World
-    Industrial Powerhouse
-    Colony
-    
-*** Space
-
-    Large-scale space stations and asteroid colonies provide highly specialized characters, but generally at a higher
-    cost than planetary counterparts.
-    
-    Mining Outpost
-    Aeronautics Academy
-    Pirate/Mercenary Base
     
     
-** Characters
-
-*** Leadership
-
-    Maybe this breaks the 'unbounded characters' idea, but to control larger numbers of mid- and low-level characters,
-    heirarchies of leaders may be needed to unlock 'subordinate slots'
-
-*** Military
-
-    Used to give bonuses for combat, or allow use of certain unit assets.
-
-*** Industrial/Economic
     
-    Bonuses to resource gathering and production management, education in requisite techniques and methods
-    
-*** Political/influential
-
-    Money sinks - passively manipulate influence
     

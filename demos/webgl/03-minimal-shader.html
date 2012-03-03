@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-  <canvas id='c' width='400' height='400'></canvas>
-  <script src='webgl-utils.js'></script>
-  <script id='vshader' type='x-shader'>
+  <canvas id="c" width="400" height="400"></canvas>
+  <script src="webgl-utils.js"></script>
+  <script id="vshader" type="x-shader">
     attribute vec2 aVertexPosition;
     varying vec2 vTexCoord;
     uniform vec2 uOffset;
@@ -11,7 +11,7 @@
     gl_Position = vec4(aVertexPosition, 0, 1);
     }
   </script>
-  <script id='fshader' type='x-shader'>
+  <script id="fshader" type="x-shader">
     precision mediump float;
     varying vec2 vTexCoord;
     void main() {

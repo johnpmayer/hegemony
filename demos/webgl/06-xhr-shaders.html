@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <canvas id="c" width="400" height="400"></canvas>
+  <script src="webgl-utils.js"></script>
+  <script type="text/javascript" language="javascript">
+    
+    var c = document.getElementById('c');
+    var gl = c.getContext('experimental-webgl');
+    var offset = [1, 1];
+    var vertexPosBuffer = screenQuad();
+    
+    function initProgram(program) {
+      gl.useProgram(program);
+      program.vertexPosAttrib = gl.getAttribLocation(program, 'aVertexPosition');
+      program.offsetUniform = gl.getUniformLocation(program, 'uOffset');
+      gl.enableVertexAttribArray(program.vertextPosArray);
+      gl.vertexAttribPointer(program.vertexPosAttrib, vertexPosBuffer.itemSize, gl.FLOAT, false, 0, 0);
+      gl.uniform2f(program.offsetUniform, offset[0], offset[1]);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, vertexPosBuffer.numItems);
+    }
+    
+    loadProgram('shaders/vshader-00.vert', 'shaders/fshader-00.frag', initProgram);
+    
+  </script>
+</html>

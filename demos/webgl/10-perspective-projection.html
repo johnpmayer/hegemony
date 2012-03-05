@@ -19,6 +19,7 @@
       modelMatrix().makeRotate(z,1,0,0);
       modelMatrix().multiply(rot.makeRotate(z,0,1,0));
       modelMatrix().multiply(rot.makeRotate(z,0,0,1));
+      modelMatrix().d[14] = -3;
       mesh.draw();
       z += 0.01;
     }

@@ -4,6 +4,7 @@ function Mesh() {
     program.vertexPositionAttribute = gl.getAttribLocation(program,'aVertexPosition');
     program.vertexNormalAttribute = gl.getAttribLocation(program, 'aVertexNormal');
     program.mMatrixUniform = gl.getUniformLocation(program, 'uMMatrix');
+    program.pMatrixUniform = gl.getUniformLocation(program, 'uPMatrix');
     if (--this.materialsToLoad == 0) {
       this.callback(); // after all programs have been loaded
     }
@@ -47,7 +48,7 @@ function Mesh() {
   
   this.setMatrixUniforms = function(program) {
     gl.uniformMatrix4fv(program.mMatrixUniform, false, modelMatrix().d);
-    
+    gl.uniformMatrix4fv(program.pMatrixUniform, false, projectionMatrix().d)
   }
   
   this.draw = function() {

@@ -73,10 +73,71 @@ Matrix4x3.prototype = {
 
 };
 
+function Matrix4x4() {
+  this.d = new Float32Array(16);
+  this.d[0] = 1;
+  this.d[5] = 1;
+  this.d[10] = 1;
+  this.d[15] = 1;
+}
+
+Matrix4x4.prototype = {
+  
+  make : function(x1, x2, x3, x4, y1, y2, y3, y4, z1, z2, z3, z4, t1, t2, t3, t4) {
+    this.d[0]  = x1;
+    this.d[1]  = x2;
+    this.d[2]  = x3;
+    this.d[3]  = x4;
+    this.d[4]  = y1;
+    this.d[5]  = y2;
+    this.d[6]  = y3;
+    this.d[7]  = y4;
+    this.d[8]  = z1;
+    this.d[9]  = z2;
+    this.d[10] = z3;
+    this.d[11] = z4;
+    this.d[12] = t1;
+    this.d[13] = t2;
+    this.d[14] = t3;
+    this.d[15] = t4;
+    return this;
+  },
+  
+  makeIdentity : function() {
+    return this.make(1,0,0, 0,1,0, 0,0,1, 0,0,0);
+  },
+
+  makePerspective : function(fovy, aspect, znear, zfar) {
+    var top = znear * Math.tan(fovy * Math.PI / 360.0);
+    var bottom = -top;
+    var left = bottom * aspect;
+    var right = top * aspect;
+
+    var X = 2*znear/(right-left);
+    var Y = 2*znear/(top-bottom);
+    var A = (right+left)/(right-left);
+    var B = (top+bottom)/(top-bottom);
+    var C = -(zfar+znear)/(zfar-znear);
+    var D = -2*zfar*znear/(zfar-znear);
+
+    this.make(X,0,0,0, 
+              0,Y,0,0, 
+              A,B,C,-1, 
+              0,0,D,0);
+    return this;
+  }
+
+};
+
 globalGLMatrixState = {
-  modelMatrix : new Matrix4x3()
+  modelMatrix : new Matrix4x3(),
+  projectionMatrix : new Matrix4x4().makePerspective(45, 1, 0.01, 100)
 };
 
 function modelMatrix() {
   return globalGLMatrixState.modelMatrix;
+}
+
+function projectionMatrix () {
+  return globalGLMatrixState.projectionMatrix;
 }

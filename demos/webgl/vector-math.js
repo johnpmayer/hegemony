@@ -69,8 +69,36 @@ Matrix4x3.prototype = {
       this.d[2]*m.d[12] + this.d[6]*m.d[13] + this.d[10]*m.d[14] + this.d[14]
     );
     return this;
-  }
+  },
+  
+  makeInverseRigidBody : function(m) {
+    // Inv(M) = Inv(Rot*Trans) = Inv(Rot) * Inv(Trans) =
+    // Transpose(Rot) * -T
+    
+    // Invert translation
+    var it0 = -m.d[12];
+    var it1 = -m.d[13];
+    var it2 = -m.d[14];
 
+    // Calculate the translation
+    this.d[12] = m.d[0] * it0 + m.d[1] * it1 + m.d[2]  * it2;
+    this.d[13] = m.d[4] * it0 + m.d[5] * it1 + m.d[6]  * it2;
+    this.d[14] = m.d[8] * it0 + m.d[9] * it1 + m.d[10] * it2;
+    
+    // Calculate the rotation (transpose)
+    this.d[0]  = m.d[0];
+    this.d[1]  = m.d[4];
+    this.d[2]  = m.d[8];
+    this.d[4]  = m.d[1];
+    this.d[5]  = m.d[5];
+    this.d[6]  = m.d[9];
+    this.d[8]  = m.d[2];
+    this.d[9]  = m.d[6];
+    this.d[10] = m.d[10];
+    
+    return this;
+  }
+  
 };
 
 function Matrix4x4() {
@@ -131,7 +159,8 @@ Matrix4x4.prototype = {
 
 globalGLMatrixState = {
   modelMatrix : new Matrix4x3(),
-  projectionMatrix : new Matrix4x4().makePerspective(45, 1, 0.01, 100)
+  projectionMatrix : new Matrix4x4().makePerspective(45, 1, 0.01, 100),
+  viewMatrix : new Matrix4x3()
 };
 
 function modelMatrix() {
@@ -140,4 +169,8 @@ function modelMatrix() {
 
 function projectionMatrix () {
   return globalGLMatrixState.projectionMatrix;
+}
+
+function viewMatrix() {
+  return globalGLMatrixState.viewMatrix;
 }

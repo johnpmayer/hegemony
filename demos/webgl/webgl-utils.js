@@ -63,10 +63,13 @@ function linkProgram(program) {
   }
 }
 
-function loadFile(file, callback, noCache) {
+function loadFile(file, callback, noCache, isJson) {
   var request = new XMLHttpRequest();
   request.onreadystatechange = function() {
     if (request.readyState == 1) {
+      if (isJson) {
+        request.overrideMimeType('application/json');
+      }
       request.send();
     } else if (request.readyState == 4) {
       if (request.status == 200) {
@@ -103,4 +106,34 @@ function loadProgram(vs, fs, callback) {
   }
   loadFile(vs, vshaderLoaded, true);
   loadFile(fs, fshaderLoaded, true);
+  return program;
 }
+
+(function() {
+  var lastTime = 0;
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+    window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+    window.cancelRequestAnimationFrame = 
+      window[vendors[x]+
+             'CancelRequestAnimationFrame'];
+  }
+  
+  if (!window.requestAnimationFrame)
+    window.requestAnimationFrame = function(callback, element) {
+      var currTime = new Date().getTime();
+      var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+      var id = window.setTimeout(
+        function() { 
+          callback(currTime + timeToCall); 
+        }, 
+        timeToCall);
+      lastTime = currTime + timeToCall;
+      return id;
+    };
+  
+  if (!window.cancelAnimationFrame)
+    window.cancelAnimationFrame = function(id) {
+      clearTimeout(id);
+    };
+}())

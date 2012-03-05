@@ -158,13 +158,14 @@ Matrix4x4.prototype = {
 };
 
 globalGLMatrixState = {
-  modelMatrix : new Matrix4x3(),
+  modelMatrix : [ new Matrix4x3(), new Matrix4x3() ],
   projectionMatrix : new Matrix4x4().makePerspective(45, 1, 0.01, 100),
-  viewMatrix : new Matrix4x3()
+  viewMatrix : new Matrix4x3(),
+  modelStackTop : 0
 };
 
 function modelMatrix() {
-  return globalGLMatrixState.modelMatrix;
+  return globalGLMatrixState.modelMatrix[globalGLMatrixState.modelStackTop];
 }
 
 function projectionMatrix () {
@@ -173,4 +174,24 @@ function projectionMatrix () {
 
 function viewMatrix() {
   return globalGLMatrixState.viewMatrix;
+}
+
+function pushModelMatrix() {
+  ++globalGLMatrixState.modelStackTop;
+  if(globalGLMatrixState.modelStackTop == globalGLMatrixState.modelMatrix.length) {
+    globalGLMatrixState.modelMatrix[globalGLMatrixState.modelMatrix.length] = 
+      new Matrix4x3();
+  }
+  var top = globalGLMatrixState.modelMatrix[globalGLMatrixState.modelStackTop];
+  var parent = globalGLMatrixState.modelMatrix[globalGLMatrixState.modelStackTop-1];
+  
+  for (var j =  0; j < 16; ++j) {
+    top.d[j] = parent.d[j];
+  }
+  return top;
+
+}
+
+function popModelMatrix() {
+  --globalGLMatrixState.modelStackTop;
 }

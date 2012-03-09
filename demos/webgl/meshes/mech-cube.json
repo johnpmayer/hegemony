@@ -1,6 +1,6 @@
 {
-  "materials" : [ {"vertexshader" : "shaders/vs-mech.txt",
-                   "fragmentshader" : "shaders/fs-mech.txt",
+  "materials" : [ {"vertexshader" : "shaders/vs-mech.vert",
+                   "fragmentshader" : "shaders/fs-mech.frag",
                    "numindices" : 36, 
                    "diffuse" : "textures/mech-diffuse.jpg",
                    "emissive" : "textures/mech-emissive.jpg" } ],

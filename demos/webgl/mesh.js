@@ -3,14 +3,33 @@ function Mesh() {
   this.programLoaded = function(program) {
     program.vertexPositionAttribute = gl.getAttribLocation(program,'aVertexPosition');
     program.vertexNormalAttribute = gl.getAttribLocation(program, 'aVertexNormal');
+    program.vertexTextureCoordAttribute = gl.getAttribLocation(program,'aVertexTextureCoord');
     program.mMatrixUniform = gl.getUniformLocation(program, 'uMMatrix');
     program.pMatrixUniform = gl.getUniformLocation(program, 'uPMatrix');
     program.vMatrixUniform = gl.getUniformLocation(program, 'uVMatrix');
+    program.uDiffuseSampler = gl.getUniformLocation(program, 'uDiffuseSampler');
+    program.uEmissiveSampler = gl.getUniformLocation(program, 'uEmissiveSampler');
     if (--this.materialsToLoad == 0) {
       this.callback(); // after all programs have been loaded
     }
   }
-
+  
+  this.loadTex = function(filename) {
+    var tex = gl.createTexture();
+    var img = new Image();
+    img.onload = function() {
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.bindTexture(gl.TEXTURE0, null);
+    };
+    img.src = filename;
+    return tex;
+  },
+  
   this.init = function(jsonstring) {
     var mesh= JSON.parse(jsonstring);
     this.vertexPosBuffer = gl.createBuffer();
@@ -27,6 +46,13 @@ function Mesh() {
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.vertexNormals), gl.STATIC_DRAW);
     }
     
+    if (mesh.vertexTextureCoords) {
+      this.vertexTextureCoordBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexTextureCoordBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.vertexTextureCoords), 
+                    gl.STATIC_DRAW);
+    }
+    
     this.materialsToLoad = mesh.materials.length;
     this.programs = [];
     var that = this;
@@ -36,6 +62,12 @@ function Mesh() {
         that.programLoaded(prog);
       });
       prog.numindices = material.numindices;
+      if (material.diffuse) {
+        prog.diffuseTexture = this.loadTex(material.diffuse);
+      }
+      if (material.emissive) {
+        prog.emissiveTexture = this.loadTex(material.emissive);
+      }
       this.programs.push(prog);
     }
     
@@ -66,6 +98,21 @@ function Mesh() {
         gl.enableVertexAttribArray(program.vertexNormalAttribute);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexNormalBuffer);
         gl.vertexAttribPointer(program.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
+      }
+      if (program.vertexTextureCoordAttribute !== null) {
+        gl.enableVertexAttribArray(program.vertexTextureCoordAttribute);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexTextureCoordBuffer);
+        gl.vertexAttribPointer(program.vertexTextureCoordAttribute, 2, gl.FLOAT, false, 0, 0);
+      }
+      if (program.diffuseTexture) {
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, program.diffuseTexture);
+        gl.uniform1i(program.uDiffuseSampler, 0);
+      }
+      if (program.emissiveTexture) {
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, program.emissiveTexture);
+        gl.uniform1i(program.uEmissiveSampler, 1);
       }
       this.setMatrixUniforms(program);
       gl.drawElements(gl.TRIANGLES, program.numindices, gl.UNSIGNED_SHORT, start * 2);

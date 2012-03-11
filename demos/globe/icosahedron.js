@@ -7,11 +7,19 @@ function Icosahedron() {
      inscribed on a sphere of radius 1. */
   
   this.init = function() {
+    this.initPolyhedron();
+    this.initMesh();
+  };
+  
+  this.initPolyhedron = function() {
     this.initRawVertices();
     this.initRawIndices();
+  };
+  
+  this.initMesh = function() {
     this.initCoordinates();
     this.initMaterials();
-  }
+  };
   
   this.initRawVertices = function() {
     
@@ -91,6 +99,38 @@ function Icosahedron() {
     }
     
   };
+  
+  this.subdivide = function(divisions) {
+    var n = Math.floor(divisions);
+    if (n < 2) {throw "Illegal subdivision factor: " + n}
+    
+    var rawIndices = this.rawIndices;
+    var rawVertices = this.rawVertices;
+    
+    this.vertexGridCollection = [];
+    
+    for (var i = 0; i < rawIndices.length; i += 3) {
+      var p0 = rawVertices[rawIndices[i]];
+      var p1 = rawVertices[rawIndices[i+1]];
+      var p2 = rawVertices[rawIndices[i+2]];
+      
+      var vertexGrid = [];
+      
+      var a = p1.sub(p0).scale(1/n);
+      var b = p2.sub(p0).scale(1/n);
+      
+      for (var j = 0; j <= n; j += 1) {
+        vertexGrid.push([]);
+        for (var k = 0; k <= (n-j); k++) {
+          vertexGrid[j].push(p0.add(a.scale(j)).add(b.scale(k)));
+        }
+      }
+      
+      this.vertexGridCollection.push(vertexGrid);
+      
+    }
+    
+  }
   
   this.initCoordinates = function() {
     

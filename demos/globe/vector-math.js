@@ -238,7 +238,15 @@ function Vector3(x,y,z) {
       this.z - vec2.z
     );
   };
-
+  
+  this.scale = function(c) {
+    return new Vector3(
+      this.x * c,
+      this.y * c,
+      this.z * c
+    );
+  }
+  
   this.pushOnto = function(list) {
     list.push(this.x);
     list.push(this.y);

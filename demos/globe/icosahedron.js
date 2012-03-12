@@ -169,8 +169,8 @@ function Icosahedron() {
   this.initMaterials = function() {
     this.materials = [
       {
-        vertexshader : "shaders/yellow.vert",
-        fragmentshader : "shaders/yellow.frag",
+        vertexshader : "shaders/globe.vert",
+        fragmentshader : "shaders/globe.frag",
         numindices : this.indices.length
       }
     ];

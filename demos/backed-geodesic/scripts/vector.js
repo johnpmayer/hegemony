@@ -47,8 +47,24 @@ define(function() {
         this.y * c,
         this.z * c
       );
-    }
+    },
     
+    mid : function(vec2) {
+      var diff = vec2.sub(this);
+      return this.add(diff.scale(1/2));
+    },
+    
+    magnitude : function() {
+      var x = this.x;
+      var y = this.y;
+      var z = this.z;
+      return Math.sqrt(x*x + y*y + z*z);
+    },
+    
+    normalize : function() {
+      var mag = this.magnitude();
+      return this.scale(1/mag);
+    }
     
   };
 

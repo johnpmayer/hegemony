@@ -171,7 +171,8 @@ define(
           }
         }
         
-        /*
+        this.u_array = u_array;
+        
         // interpolate along v_arrays
         // for every v_array
         for (var i = 0; i < u_array.length; i += 2) {
@@ -180,15 +181,17 @@ define(
           for (var j = 0; j + 2 < v_array.length; j += 2) {
             if (v_array[j] && v_array[j+2]) {
               // calculate the 1 new vertex
-              var start = v_array[j];
-              var end = v_array[j+2];
-              var stepV = end.sub(start).scale(1/2);
-              v_array[j+1] = start.add(stepV);
+              var start = v_array[j].p;
+              var end = v_array[j+2].p;
+              //var stepV = end.sub(start).scale(1/2);
+              //v_array[j+1] = start.add(stepV);
+              //var node = start.add(stepV).normalize();
+              var node = start.mid(end).normalize();
+              this.addNode(node, i,j+1)
             }
           }
         }
         
-        /*
         // interpolate between v_arrays
         // for every pair of v_arrays
         for (var i = 0; i + 2 < u_array.length; i += 2) {
@@ -198,28 +201,30 @@ define(
             // for every two horizontal adjacent vertices
             if(v_array_a[j] && v_array_b[j]) {
               // calculate the f-1 new vertices horizontally
-              var start = v_array_a[j];
-              var end = v_array_b[j];
-              var stepV = end.sub(start).scale(1/2);
-              u_array[i+1][j] = start.add(stepV);
+              var start = v_array_a[j].p;
+              var end = v_array_b[j].p;
+              //var stepV = end.sub(start).scale(1/2);
+              //u_array[i+1][j] = start.add(stepV);
+              var node = start.mid(end).normalize();
+              this.addNode(node, i+1, j);
             }
             // for every two diagonally adjacent vertices
             if(v_array_a[j] && v_array_b[j+2]) {
               // calculate the f-1 new vertices diagonally
-              var start = v_array_a[j];
-              var end = v_array_b[j+2];
+              var start = v_array_a[j].p;
+              var end = v_array_b[j+2].p;
               if (!(start === end)) {
-                var stepV = end.sub(start).scale(1/2);
-                u_array[i+1][j+1] = start.add(stepV);
+                //var stepV = end.sub(start).scale(1/2);
+                //u_array[i+1][j+1] = start.add(stepV);
+                var node = start.mid(end).normalize();
+                this.addNode(node, i+1, j+1);
               }
             }
           }
         }
-        */
         
         // update object fields
         this.frequency = f;
-        this.u_array = u_array;
         
         // scan boundaries for duplication
         //this.boundaryScan();

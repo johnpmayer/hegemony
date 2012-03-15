@@ -5,10 +5,40 @@ define(
   ["vector"],
   function(vector) {
     
+    function GridCoord(u,v) {
+      this.u = u;
+      this.v = v;
+      
+      this.doubleFrequency = function() {
+        this.u *= 2;
+        this.v *= 2;
+        return this;
+      }
+      
+      this.equals = function(u,v) {
+        return this.u === u
+          && this.v === v;
+      }
+      
+    }
+    
+    
     function Node(vec, u, v) {
       
-      this.point = vec;
-      this.instances = [{u:u,v:v}];
+      this.p = vec;
+      this.instances = [new GridCoord(u,v)];
+      
+      this.doubleFrequency = function() {
+        var instances = this.instances
+        for (var i = 0; i < instances.length; i += 1) {
+          instances[i].doubleFrequency();
+        }
+        return this;
+      }
+      
+      this.firstAt = function(u,v) {
+        return this.instances[0].equals(u,v);
+      }
       
     }
     
@@ -64,7 +94,7 @@ define(
       for (var i = 1; i <= 4; i += 1) {
         var u = i * f;
         var v = (i+1) * f;
-        north_pole.instances.push({u:u,v:v});
+        north_pole.instances.push(new GridCoord(u,v));
         u_array[u][v] = north_pole;
       }
       
@@ -73,7 +103,7 @@ define(
       for (var i = 1; i <= 4; i += 1) {
         var u = (i+2) * f;
         var v = i * f;
-        south_pole.instances.push({u:u,v:v});
+        south_pole.instances.push(new GridCoord(u,v));
         u_array[u][v] = south_pole;
       }
       
@@ -82,7 +112,7 @@ define(
         var purple = u_array[i][0];
         var u = 5*f + i;
         var v = 5*f;
-        purple.instances.push({u:u,v:v});
+        purple.instances.push(new GridCoord(u,v));
         u_array[u][v] = purple;
       }
       
@@ -93,9 +123,23 @@ define(
     
     icosahedron.boundaryScan();
     
+    icosahedron.uniqueVertices = function() {
+      var count = 0;
+      var u_array = this.u_array;
+      for (var i = 0; i < u_array.length; i += 1) {
+        var v_array = u_array[i];
+        for (var j = 0; j < u_array.length; j += 1) {
+          var node = v_array[j];
+          if (node && node.firstAt(i,j)) {
+            count += 1;
+          }
+        }
+      }
+      return count;
+    }
+    
     icosahedron.addLabels = function() {
       // ToDo
-      this.uniqueVertices = -1;
     }
     
     var Geodesic = function() {
@@ -105,7 +149,7 @@ define(
         var f = this.frequency * 2;
         var u_array = [];
         var max_u = f * 6; // 0 <= u <= 6f
-
+        
         // allocate space for the new u_array
         var u_array = [];
         for (var i = 0; i <= max_u; i += 1) {
@@ -117,12 +161,17 @@ define(
           var old_v_array = this.u_array[i];
           var v_array = u_array[2*i];
           for (var j = 0; j < old_v_array.length; j += 1) {
-            if (old_v_array[j]) {            
+            var node = old_v_array[j];
+            if (node) {
+              if (node.firstAt(i,j)) {
+                node.doubleFrequency();
+              }
               v_array[2*j] = old_v_array[j];
             }
           }
         }
         
+        /*
         // interpolate along v_arrays
         // for every v_array
         for (var i = 0; i < u_array.length; i += 2) {
@@ -139,6 +188,7 @@ define(
           }
         }
         
+        /*
         // interpolate between v_arrays
         // for every pair of v_arrays
         for (var i = 0; i + 2 < u_array.length; i += 2) {
@@ -165,13 +215,14 @@ define(
             }
           }
         }
+        */
         
         // update object fields
         this.frequency = f;
         this.u_array = u_array;
         
         // scan boundaries for duplication
-        this.boundaryScan();
+        //this.boundaryScan();
       }
       
     }

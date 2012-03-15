@@ -3,14 +3,14 @@ require(["geodesic"], function(geodesic){
   
   var geo = new geodesic.Geodesic();
   
-  var numDoubles = 0;
+  var numDoubles = 1;
   
   function br(n) {
     for (var i = 0; i < n; i += 1) {
       document.write("<br/>");
     }
   }
-
+  
   for (var i = 0; i < numDoubles; i++) {
     geo.doubleFrequency();
   }
@@ -35,7 +35,7 @@ require(["geodesic"], function(geodesic){
     br(2);
   }
   
-  document.write(u_count);
+  document.write(geo.uniqueVertices());
   br(2);
   document.write(10 * Math.pow(geo.frequency, 2) + 2);
   

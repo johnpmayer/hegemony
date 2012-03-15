@@ -3,7 +3,7 @@ require(["geodesic"], function(geodesic){
   
   var geo = new geodesic.Geodesic();
   
-  var numDoubles = 1;
+  var numDoubles = 3;
   
   function br(n) {
     for (var i = 0; i < n; i += 1) {

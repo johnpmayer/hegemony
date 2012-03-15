@@ -124,9 +124,41 @@ define(
       }
       
       // upper stitch x5 (red,salmon,green,cyan,orange)
+      // copy horizontal onto next vertical (wrap)
+      for (var i = 0; i < 5; i += 1) {
+        var src_u_base = i * f;
+        var src_v = (i+1) * f;
+        var dst_u = ((i+1)%5) * f;
+        var dst_v_base = ((i+1)%5) * f;
+        for (var j = 1; j < f; j += 1) {
+          var src_u = src_u_base + j;
+          var src = u_array[src_u][src_v];
+          if (f <= src.gen) {
+            var dst_v = dst_v_base + j;
+            src.instances.push(new GridCoord(dst_u, dst_v));
+            u_array[dst_u][dst_v] = src;
+          }
+        }
+      }
       
       // lower stutch x5 (blue,indigo,silver,gold,dgreen)
-      
+      // copy vertical onto next horizontal (wrap)
+      for (var i = 0; i < 5; i += 1) {
+        var src_u = (i+2) * f;
+        var src_v_base = i * f;
+        var dst_u_base = (((i+1)%5)+1) * f;
+        var dst_v = ((i+1)%5) * f;
+        for (var j = 1; j < f; j += 1) {
+          var src_v = src_v_base + j;
+          var src = u_array[src_u][src_v];
+          if (f <= src.gen) {
+            var dst_u = dst_u_base + j;
+            src.instances.push(new GridCoord(dst_u,dst_v));
+            u_array[dst_u][dst_v] = src;
+          }
+        }
+      }
+            
     }
     
     icosahedron.boundaryScan();

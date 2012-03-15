@@ -198,7 +198,45 @@ define(
     icosahedron.updateVertexBuffer();
     
     icosahedron.updateIndices = function() {
+      
+      var f = this.frequency;
+      var u_array = this.u_array;
+      var indices = [];
+      
+      // For each "major square"
+      for (var i = 0; i < 5; i += 1) {
+        for (var j = 0; j < 2; j += 1) {
+          var anchor_u = (i+j) * f;
+          var anchor_v = i * f;
+          
+          // Starting at the anchor Coord, generate the 2*f*f
+          // triangles (clockwise)
+          for (var x = 0; x < f; x += 1) {
+            for (var y = 0; y < f; y += 1) {
+              
+              var nodeA = u_array[anchor_u + x][anchor_v + y];
+              var nodeB = u_array[anchor_u + x + 1][anchor_v + y];
+              var nodeC = u_array[anchor_u + x][anchor_v + y + 1];
+              var nodeD = u_array[anchor_u + x + 1][anchor_v + y + 1];
+              
+              // upper triangle
+              indices.push(nodeA.index);
+              indices.push(nodeC.index);
+              indices.push(nodeD.index);
 
+              // lower triangle
+              indices.push(nodeA.index);
+              indices.push(nodeD.index);
+              indices.push(nodeB.index);
+              
+            }
+          }
+          
+        }
+      }
+      
+      this.indices = indices;
+      
     }
     
     icosahedron.updateIndices();

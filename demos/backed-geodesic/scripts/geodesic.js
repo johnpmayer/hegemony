@@ -5,9 +5,8 @@ define(
   ["vector"],
   function(vector) {
     
-    function Node(lbl, vec, u, v) {
+    function Node(vec, u, v) {
       
-      this.label = lbl;
       this.point = vec;
       this.instances = [{u:u,v:v}];
       
@@ -23,31 +22,76 @@ define(
       icosahedron.u_array[i] = v_array;
     }
     
+    icosahedron.addNode = function(vec, u, v) {
+      this.u_array[u][v] = new Node(vec,u,v);
+    }
+    
     // add the vertices, and handle all duplication
     var north_pole = new vector.Vector3(0,1,0);
     var south_pole = new vector.Vector3(0,-1,0);
     var latitude = Math.atan(0.5);
     for (var i = 0; i < 5; i += 1) {
-      icosahedron.u_array[i][i+1] = north_pole;
+      //icosahedron.u_array[i][i+1] = north_pole;
+      icosahedron.addNode(north_pole, i, i+1);
       
       var t1 = (2 * i)     * Math.PI / 5;
       var upper = new vector.fromSpherical(1,t1,latitude);
-      icosahedron.u_array[i][i] = upper;
-      if (i === 0) icosahedron.u_array[i+5][i+5] = upper;
-      
+      //icosahedron.u_array[i][i] = upper;
+      icosahedron.addNode(upper, i, i);
+      if (i === 0) //icosahedron.u_array[i+5][i+5] = upper;
+        icosahedron.addNode(upper, 5, 5);
+        
       var t2 = (2 * i + 1) * Math.PI / 5
       var lower = new vector.fromSpherical(1,t2,-latitude);
-      icosahedron.u_array[i+1][i] = lower;
-      if (i === 0) icosahedron.u_array[i+6][i+5] = lower;
-      
-      icosahedron.u_array[i+2][i] = south_pole;
+      //icosahedron.u_array[i+1][i] = lower;
+      icosahedron.addNode(lower,i+1,i);
+      if (i === 0) //icosahedron.u_array[i+6][i+5] = lower;
+        icosahedron.addNode(lower,6,5);
+        
+      //icosahedron.u_array[i+2][i] = south_pole;
+      icosahedron.addNode(south_pole,i+2,i);
     }
     
     icosahedron.frequency = 1;
     
     icosahedron.boundaryScan = function() {
-      // ToDo
+      
+      var u_array = this.u_array;
+      var f = this.frequency;
+      
+      // North pole (A)
+      var north_pole = u_array[0][f];
+      for (var i = 1; i <= 4; i += 1) {
+        var u = i * f;
+        var v = (i+1) * f;
+        north_pole.instances.push({u:u,v:v});
+        u_array[u][v] = north_pole;
+      }
+      
+      // South pole (C)
+      var south_pole = u_array[2*f][0];
+      for (var i = 1; i <= 4; i += 1) {
+        var u = (i+2) * f;
+        var v = i * f;
+        south_pole.instances.push({u:u,v:v});
+        u_array[u][v] = south_pole;
+      }
+      
+      // mid stitch (purple)
+      for (var i = 0; i <= f; i += 1) {
+        var purple = u_array[i][0];
+        var u = 5*f + i;
+        var v = 5*f;
+        purple.instances.push({u:u,v:v});
+        u_array[u][v] = purple;
+      }
+      
+      
+      // upper stitch x5 (red,salmon,green,cyan,orange)
+      // lower stutch x5 (blue,indigo,silver,gold,dgreen)
     }
+    
+    icosahedron.boundaryScan();
     
     icosahedron.addLabels = function() {
       // ToDo
@@ -122,13 +166,12 @@ define(
           }
         }
         
-        // boundary scan
-        
-        
-        
-        
+        // update object fields
         this.frequency = f;
         this.u_array = u_array;
+        
+        // scan boundaries for duplication
+        this.boundaryScan();
       }
       
     }

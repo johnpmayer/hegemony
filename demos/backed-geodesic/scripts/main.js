@@ -3,45 +3,40 @@ require(["geodesic"], function(geodesic){
   
   var geo = new geodesic.Geodesic();
   
-  function write(s) {
-    document.write("<p>" + s + "</p>")
+  var numDoubles = 0;
+  
+  function br(n) {
+    for (var i = 0; i < n; i += 1) {
+      document.write("<br/>");
+    }
+  }
+
+  for (var i = 0; i < numDoubles; i++) {
+    geo.doubleFrequency();
   }
   
-  write("geo = " + JSON.stringify(geo));
-  write("geo.__proto__ = " + JSON.stringify(geo.__proto__));
+  document.write("geo f=" + geo.frequency);
   
-  geo.doubleFrequency();
+  br(2);
   
-  write("geo f=2:")
   var u_count = 0;
   for (var i = 0; i < geo.u_array.length; i += 1) {
-    var v_array = geo.u_array[i];
-    var v_count = 0;
-    for (var j = 0; j < v_array.length; j += 1) {
-      if (v_array[j]) {
-        u_count += 1;
-        v_count += 1;
+      var v_array = geo.u_array[i];
+      var v_count = 0;
+      for (var j = 0; j < v_array.length; j += 1) {
+        document.write(JSON.stringify(v_array[j]));
+        br(1);
+        if (v_array[j]) {
+          u_count += 1;
+          v_count += 1;
+        }
       }
-    }
-    write(i + " " + v_array.length + " " + v_count + " " + JSON.stringify(v_array));
+    document.write(i + " " + v_array.length + " " + v_count);
+    br(2);
   }
-  write(u_count);
   
-  geo.doubleFrequency();
-  
-  write("geo f=4:")
-  var u_count = 0;
-  for (var i = 0; i < geo.u_array.length; i += 1) {
-    var v_array = geo.u_array[i];
-    var v_count = 0;
-    for (var j = 0; j < v_array.length; j += 1) {
-      if (v_array[j]) {
-        u_count += 1;
-        v_count += 1;
-      }
-    }
-    write(i + " " + v_array.length + " " + v_count + " " + JSON.stringify(v_array));
-  }
-  write(u_count);
+  document.write(u_count);
+  br(2);
+  document.write(10 * Math.pow(geo.frequency, 2) + 2);
   
 });

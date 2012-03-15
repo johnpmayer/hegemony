@@ -23,10 +23,11 @@ define(
     }
     
     
-    function Node(vec, u, v) {
+    function Node(vec, u, v, gen) {
       
       this.p = vec;
       this.instances = [new GridCoord(u,v)];
+      this.gen = gen;
       
       this.doubleFrequency = function() {
         var instances = this.instances
@@ -45,6 +46,8 @@ define(
     // create the base icosahedron
     var icosahedron = {};
     
+    icosahedron.frequency = 1;
+    
     // initialize 2-level array
     icosahedron.u_array = [];
     for (var i = 0; i <= 6; i +=1) {
@@ -53,7 +56,7 @@ define(
     }
     
     icosahedron.addNode = function(vec, u, v) {
-      this.u_array[u][v] = new Node(vec,u,v);
+      this.u_array[u][v] = new Node(vec,u,v,this.frequency);
     }
     
     // add the vertices, and handle all duplication
@@ -81,9 +84,7 @@ define(
       //icosahedron.u_array[i+2][i] = south_pole;
       icosahedron.addNode(south_pole,i+2,i);
     }
-    
-    icosahedron.frequency = 1;
-    
+        
     icosahedron.boundaryScan = function() {
       
       var u_array = this.u_array;
@@ -91,34 +92,41 @@ define(
       
       // North pole (A)
       var north_pole = u_array[0][f];
-      for (var i = 1; i <= 4; i += 1) {
-        var u = i * f;
-        var v = (i+1) * f;
-        north_pole.instances.push(new GridCoord(u,v));
-        u_array[u][v] = north_pole;
+      if (f <= north_pole.gen) {
+        for (var i = 1; i <= 4; i += 1) {
+          var u = i * f;
+          var v = (i+1) * f;
+          north_pole.instances.push(new GridCoord(u,v));
+          u_array[u][v] = north_pole;
+        }
       }
       
       // South pole (C)
       var south_pole = u_array[2*f][0];
-      for (var i = 1; i <= 4; i += 1) {
-        var u = (i+2) * f;
-        var v = i * f;
-        south_pole.instances.push(new GridCoord(u,v));
-        u_array[u][v] = south_pole;
+      if (f <= south_pole.gen) {
+        for (var i = 1; i <= 4; i += 1) {
+          var u = (i+2) * f;
+          var v = i * f;
+          south_pole.instances.push(new GridCoord(u,v));
+          u_array[u][v] = south_pole;
+        }
       }
       
       // mid stitch (purple)
       for (var i = 0; i <= f; i += 1) {
         var purple = u_array[i][0];
-        var u = 5*f + i;
-        var v = 5*f;
-        purple.instances.push(new GridCoord(u,v));
-        u_array[u][v] = purple;
+        if (f <= purple.gen) {
+          var u = 5*f + i;
+          var v = 5*f;
+          purple.instances.push(new GridCoord(u,v));
+          u_array[u][v] = purple;
+        }
       }
       
-      
       // upper stitch x5 (red,salmon,green,cyan,orange)
+      
       // lower stutch x5 (blue,indigo,silver,gold,dgreen)
+      
     }
     
     icosahedron.boundaryScan();
@@ -156,7 +164,7 @@ define(
           u_array[i] = [];
         }
         
-        // copy the major vertices from the icosahedron
+        // copy the major vertices from previous generation
         for (var i = 0; i < this.u_array.length; i += 1) {
           var old_v_array = this.u_array[i];
           var v_array = u_array[2*i];
@@ -171,6 +179,8 @@ define(
           }
         }
         
+        // update object fields
+        this.frequency = f;
         this.u_array = u_array;
         
         // interpolate along v_arrays
@@ -223,11 +233,8 @@ define(
           }
         }
         
-        // update object fields
-        this.frequency = f;
-        
         // scan boundaries for duplication
-        //this.boundaryScan();
+        this.boundaryScan();
       }
       
     }

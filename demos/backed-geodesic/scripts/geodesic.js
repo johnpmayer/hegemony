@@ -22,7 +22,6 @@ define(
       
     }
     
-    
     function Node(vec, u, v, gen) {
       
       this.p = vec;
@@ -48,6 +47,9 @@ define(
     
     icosahedron.frequency = 1;
     
+    // initialize vertex buffer
+    icosahedron.vertexBuffer = [];
+    
     // initialize 2-level array
     icosahedron.u_array = [];
     for (var i = 0; i <= 6; i +=1) {
@@ -56,7 +58,9 @@ define(
     }
     
     icosahedron.addNode = function(vec, u, v) {
-      this.u_array[u][v] = new Node(vec,u,v,this.frequency);
+      var node = new Node(vec,u,v,
+                          this.frequency);
+      this.u_array[u][v] = node;
     }
     
     // add the vertices, and handle all duplication
@@ -84,7 +88,7 @@ define(
       //icosahedron.u_array[i+2][i] = south_pole;
       icosahedron.addNode(south_pole,i+2,i);
     }
-        
+    
     icosahedron.boundaryScan = function() {
       
       var u_array = this.u_array;
@@ -158,10 +162,46 @@ define(
           }
         }
       }
-            
+      
     }
     
     icosahedron.boundaryScan();
+    
+    /*
+     * This will overwrite the existing vertexBuffer,
+     * and will overwrite any index information in
+     * the Nodes stored in the u_array
+     */
+    icosahedron.updateVertexBuffer = function() {
+      
+      var vertexBuffer = [];
+      
+      var indexCounter = 0;
+      
+      var u_array = this.u_array;
+      for (var i = 0; i < u_array.length; i += 1) {
+        var v_array = u_array[i];
+        for (var j = 0; j < u_array.length; j += 1) {
+          var node = v_array[j];
+          if (node && node.firstAt(i,j)) {
+            vertexBuffer.push(node.p);
+            node.index = indexCounter;
+            indexCounter += 1;
+          }
+        }
+      }
+      
+      this.vertexBuffer = vertexBuffer;
+      
+    }
+    
+    icosahedron.updateVertexBuffer();
+    
+    icosahedron.updateIndices = function() {
+
+    }
+    
+    icosahedron.updateIndices();
     
     icosahedron.uniqueVertices = function() {
       var count = 0;
@@ -268,6 +308,8 @@ define(
         
         // scan boundaries for duplication
         this.boundaryScan();
+        this.updateVertexBuffer();
+        this.updateIndices();
       }
       
     }

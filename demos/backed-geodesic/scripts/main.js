@@ -48,5 +48,7 @@ require(["geodesic"], function(geodesic){
   document.write(u_count_unique + " " + geo.uniqueVertices());
   br(2);
   document.write(10 * Math.pow(geo.frequency, 2) + 2);
+  br(2);
+  document.write(geo.vertexBuffer.length);
   
 });

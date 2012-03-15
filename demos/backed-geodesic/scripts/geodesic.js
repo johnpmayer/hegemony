@@ -250,12 +250,13 @@ define(
               var node = start.mid(end).normalize();
               this.addNode(node, i+1, j);
             }
+            
             // for every two diagonally adjacent vertices
             if(v_array_a[j] && v_array_b[j+2]) {
               // calculate the f-1 new vertices diagonally
               var start = v_array_a[j].p;
               var end = v_array_b[j+2].p;
-              if (!(start === end)) {
+              if (v_array_a[j+2] && v_array_b[j]) {
                 //var stepV = end.sub(start).scale(1/2);
                 //u_array[i+1][j+1] = start.add(stepV);
                 var node = start.mid(end).normalize();

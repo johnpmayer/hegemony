@@ -1,5 +1,5 @@
 define(function(){
-  function Mesh() {
+  function Mesh(gl) {
     
     this.programLoaded = function(program) {
       program.vertexPositionAttribute = gl.getAttribLocation(program,'aVertexPosition');

@@ -174,7 +174,7 @@ define(
      */
     icosahedron.updateVertexBuffer = function() {
       
-      var vertexBuffer = [];
+      var vertexPositions = [];
       
       var indexCounter = 0;
       
@@ -184,14 +184,16 @@ define(
         for (var j = 0; j < u_array.length; j += 1) {
           var node = v_array[j];
           if (node && node.firstAt(i,j)) {
-            vertexBuffer.push(node.p);
+            vertexPositions.push(node.p.x);
+            vertexPositions.push(node.p.y);
+            vertexPositions.push(node.p.z);
             node.index = indexCounter;
             indexCounter += 1;
           }
         }
       }
       
-      this.vertexBuffer = vertexBuffer;
+      this.vertexPositions = vertexPositions;
       
     }
     

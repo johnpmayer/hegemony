@@ -22,6 +22,11 @@ require(["geodesic", "mesh"], function(geodesic, mesh){
     alert("draw");
   }
   
+  geo.materials = [{
+    vertexshader : "shaders/geo.vert",
+    fragmentshader : "shaders/geo.frag"
+  }];
+  
   var geoMesh = new mesh.Mesh(gl);
   geoMesh.build(geo, draw);
   

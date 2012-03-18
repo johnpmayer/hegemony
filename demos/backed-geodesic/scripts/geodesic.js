@@ -172,9 +172,7 @@ define(
      * and will overwrite any index information in
      * the Nodes stored in the u_array
      */
-    icosahedron.updateVertexBuffer = function() {
-      
-      var vertexPositions = [];
+    icosahedron.labelVertices = function() {
       
       var indexCounter = 0;
       
@@ -184,26 +182,49 @@ define(
         for (var j = 0; j < u_array.length; j += 1) {
           var node = v_array[j];
           if (node && node.firstAt(i,j)) {
-            vertexPositions.push(node.p.x);
-            vertexPositions.push(node.p.y);
-            vertexPositions.push(node.p.z);
             node.index = indexCounter;
             indexCounter += 1;
           }
         }
       }
       
-      this.vertexPositions = vertexPositions;
-      
     }
     
-    icosahedron.updateVertexBuffer();
+    icosahedron.labelVertices();
     
-    icosahedron.updateIndices = function() {
+    icosahedron.updateMesh = function() {
       
       var f = this.frequency;
       var u_array = this.u_array;
+      
+      var vertexPositions = [];
       var indices = [];
+      var vertexNormals = [];
+      
+      var indexCounter = 0;
+      
+      var addVertex = function(l,v) {
+        l.push(v.x);
+        l.push(v.y);
+        l.push(v.z);
+      }
+      
+      var addTriangle = function(v1,v2,v3) {
+        var a = v3.sub(v1);
+        var b = v2.sub(v1);
+        var norm = a.cross(b).normalize();
+        
+        addVertex(vertexPositions, v1);
+        addVertex(vertexPositions, v2);
+        addVertex(vertexPositions, v3);
+        
+        for (var i = 0; i < 3; i++) {
+          indices.push(indexCounter);
+          indexCounter += 1;
+          addVertex(vertexNormals, norm);
+        }
+        
+      }
       
       // For each "major square"
       for (var i = 0; i < 5; i += 1) {
@@ -221,15 +242,19 @@ define(
               var nodeC = u_array[anchor_u + x][anchor_v + y + 1];
               var nodeD = u_array[anchor_u + x + 1][anchor_v + y + 1];
               
+              addTriangle(nodeA.p, nodeC.p, nodeD.p);
+              
               // upper triangle
-              indices.push(nodeA.index);
-              indices.push(nodeC.index);
-              indices.push(nodeD.index);
-
+              //indices.push(nodeA.index);
+              //indices.push(nodeC.index);
+              //indices.push(nodeD.index);
+              
+              addTriangle(nodeA.p, nodeD.p, nodeB.p);
+              
               // lower triangle
-              indices.push(nodeA.index);
-              indices.push(nodeD.index);
-              indices.push(nodeB.index);
+              //indices.push(nodeA.index);
+              //indices.push(nodeD.index);
+              //indices.push(nodeB.index);
               
             }
           }
@@ -237,11 +262,13 @@ define(
         }
       }
       
+      this.vertexPositions = vertexPositions;
       this.indices = indices;
+      this.vertexNormals = vertexNormals;
       
     }
     
-    icosahedron.updateIndices();
+    icosahedron.updateMesh();
     
     icosahedron.uniqueVertices = function() {
       var count = 0;
@@ -348,8 +375,9 @@ define(
         
         // scan boundaries for duplication
         this.boundaryScan();
-        this.updateVertexBuffer();
-        this.updateIndices();
+        //this.updateVertexBuffer();
+        //this.updateIndices();
+        this.updateMesh();
       }
       
     }

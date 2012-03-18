@@ -2,8 +2,8 @@
 // mesh
 
 define(
-  ["webgl"],
-  function(webgl){
+  ["webgl", "matrix"],
+  function(webgl, matrix){
     
     function Mesh(gl) {
       
@@ -101,9 +101,15 @@ define(
       };
       
       this.setMatrixUniforms = function(program) {
-        gl.uniformMatrix4fv(program.mMatrixUniform, false, modelMatrix().d);
-        gl.uniformMatrix4fv(program.pMatrixUniform, false, projectionMatrix().d)
-        gl.uniformMatrix4fv(program.vMatrixUniform, false, viewMatrix().d)
+        gl.uniformMatrix4fv(program.mMatrixUniform, 
+                            false,
+                            matrix.modelMatrix().d);
+        gl.uniformMatrix4fv(program.pMatrixUniform, 
+                            false, 
+                            matrix.projectionMatrix().d)
+        gl.uniformMatrix4fv(program.vMatrixUniform, 
+                            false, 
+                            matrix.viewMatrix().d)
       }
       
       this.draw = function() {

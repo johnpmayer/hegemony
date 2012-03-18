@@ -210,7 +210,12 @@ define(function() {
   
   return {
     Matrix4x3 : Matrix4x3,
-    Matrix4x4 : Matrix4x4
+    Matrix4x4 : Matrix4x4,
+    modelMatrix : modelMatrix,
+    projectionMatrix : projectionMatrix,
+    viewMatrix : viewMatrix,
+    pushModelMatrix : pushModelMatrix,
+    popModelMatrix : popModelMatrix
   }
   
 });

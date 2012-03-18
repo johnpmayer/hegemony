@@ -91,13 +91,33 @@ define(function(){
     return program;
   }
   
+  var lastTime = 0;
+  
+  function requestAnimationFrame(callback, element) {
+    var currTime = new Date().getTime();
+    var timeToCall = Math.max(0, 16 - (currTime, lastTime))
+    var id = setTimeout(
+      function() {
+        callback(currTime + timeToCall);
+      },
+      timeToCall);
+    lastTime = currTime + timeToCall;
+    return id;
+  }
+  
+  function cancelAnimationFrame(id) {
+    clearTimeout(id);
+  }
+  
   return {
     createShader : createShader,
     createProgram : createProgram,
     //screenQuad,screenQuad,
     linkProgram : linkProgram,
     loadFile : loadFile,
-    loadProgram : loadProgram
+    loadProgram : loadProgram,
+    requestAnimationFrame : requestAnimationFrame,
+    cancelAnimationFrame : cancelAnimationFrame
   };
   
 })

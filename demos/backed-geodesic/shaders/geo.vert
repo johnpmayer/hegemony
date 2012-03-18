@@ -8,6 +8,6 @@ uniform mat4 uVMatrix;
 varying vec4 vWorldSpaceNormal;
 
 void main() {
-  gl_Position = uMMatrix * uPMatrix * uVMatrix * vec4(aVertexPosition, 1.0);
+  gl_Position = uPMatrix * uVMatrix * uMMatrix * vec4(aVertexPosition, 1.0);
   vWorldSpaceNormal = uMMatrix * vec4(aVertexNormal, 0.0);
 }

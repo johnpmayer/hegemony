@@ -138,14 +138,14 @@ define(
           var src_u = src_u_base + j;
           var src = u_array[src_u][src_v];
           if (f <= src.gen) {
-            var dst_v = dst_v_base + j;
+            var dst_v = dst_v_base + (f-j);
             src.instances.push(new GridCoord(dst_u, dst_v));
             u_array[dst_u][dst_v] = src;
           }
         }
       }
       
-      // lower stutch x5 (blue,indigo,silver,gold,dgreen)
+      // lower stitch x5 (blue,indigo,silver,gold,dgreen)
       // copy vertical onto next horizontal (wrap)
       for (var i = 0; i < 5; i += 1) {
         var src_u = (i+2) * f;
@@ -156,7 +156,7 @@ define(
           var src_v = src_v_base + j;
           var src = u_array[src_u][src_v];
           if (f <= src.gen) {
-            var dst_u = dst_u_base + j;
+            var dst_u = dst_u_base + (f-j);
             src.instances.push(new GridCoord(dst_u,dst_v));
             u_array[dst_u][dst_v] = src;
           }

@@ -11,13 +11,10 @@ require(
     gl.clearColor(0,0,0,1);
     
     var geo = new geodesic.Geodesic();
-    var numDoubles = 1;
+    var numDoubles = 4;
     for (var i = 0; i < numDoubles; i++) {
       geo.doubleFrequency();
     }
-    
-    alert("Geo: " + (geo.vertexPositions.length / 3)
-          + " " + (geo.indices.length / 3));
     
     var geoMesh = new mesh.Mesh(gl);
     var camera = new matrix.Matrix4x3();
@@ -26,8 +23,7 @@ require(
     draw = function() {
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       
-      scene.local.scale(0.8);
-      camera.d[14] = 8;
+      camera.d[14] = 5;
       matrix.viewMatrix().makeInverseRigidBody(camera);
       scene.draw();
     }

@@ -10,7 +10,7 @@ require(
     gl.enable(gl.DEPTH_TEST);
     gl.clearColor(0,0,0,1);
 
-    var numDoubles = 4;
+    var numDoubles = 3;
     
     var geo = new geodesic.Geodesic();
     for (var i = 0; i < numDoubles; i++) {
@@ -19,17 +19,19 @@ require(
     
     var geoMesh = new mesh.Mesh(gl);
     var camera = new matrix.Matrix4x3();
-    var scene = new scene.DAGNode([new scene.Geometry(geoMesh)]);
+    var geoScene = new scene.DAGNode([new scene.Geometry(geoMesh)]);
     var z = 0;
     
+    var id;
+    
     draw = function() {
-      webgl.requestAnimationFrame(draw, c);
+      id = webgl.requestAnimationFrame(draw, c);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       
-      scene.local.makeRotate(z,0,1,0);
+      geoScene.local.makeRotate(z,0,1,0);
       camera.d[14] = 5;
       matrix.viewMatrix().makeInverseRigidBody(camera);
-      scene.draw();
+      geoScene.draw();
       z += 0.005;
     }
     

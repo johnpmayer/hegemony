@@ -11,6 +11,7 @@ define(
         program.vertexPositionAttribute = gl.getAttribLocation(program,'aVertexPosition');
         program.vertexNormalAttribute = gl.getAttribLocation(program, 'aVertexNormal');
         program.vertexTextureCoordAttribute = gl.getAttribLocation(program,'aVertexTextureCoord');
+        program.vertexColorAttribute = gl.getAttribLocation(program, 'aVertexColor');
         program.mMatrixUniform = gl.getUniformLocation(program, 'uMMatrix');
         program.pMatrixUniform = gl.getUniformLocation(program, 'uPMatrix');
         program.vMatrixUniform = gl.getUniformLocation(program, 'uVMatrix');
@@ -64,7 +65,16 @@ define(
         if (mesh.vertexTextureCoords) {
           this.vertexTextureCoordBuffer = gl.createBuffer();
           gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexTextureCoordBuffer);
-          gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.vertexTextureCoords), 
+          gl.bufferData(gl.ARRAY_BUFFER, 
+                        new Float32Array(mesh.vertexTextureCoords), 
+                        gl.STATIC_DRAW);
+        }
+        
+        if (mesh.vertexColors) {
+          this.vertexColorBuffer = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexColorBuffer);
+          gl.bufferData(gl.ARRAY_BUFFER,
+                        new Float32Array(mesh.vertexColors),
                         gl.STATIC_DRAW);
         }
         
@@ -131,6 +141,11 @@ define(
             gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexTextureCoordBuffer);
             gl.vertexAttribPointer(program.vertexTextureCoordAttribute, 2, gl.FLOAT, false, 0, 0);
           }
+          if (program.vertexColorAttribute !== null) {
+            gl.enableVertexAttribArray(program.vertexColorAttribute);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexColorBuffer);
+            gl.vertexAttribPointer(program.vertexColorAttribute, 3, gl.FLOAT, false, 0, 0);
+          }
           if (program.diffuseTexture) {
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, program.diffuseTexture);
@@ -151,7 +166,6 @@ define(
     return {
       Mesh:Mesh
     };
-    
     
   }
 );

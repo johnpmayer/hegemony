@@ -27,6 +27,26 @@ define(
       this.p = vec;
       this.instances = [new GridCoord(u,v)];
       this.gen = gen;
+      /*
+      this.color = {
+        r:Math.random(),
+        g:Math.random(),
+        b:Math.random()
+      };
+      */
+      this.color = (function(){
+        var r = g = b = 0;
+        test = Math.random();
+        
+        if (test < 0.6) {b=0.8;}
+        else {
+          r = 0.5 * Math.random();
+          g = 0.8;
+          b = r;
+        }
+        
+        return {r:r,g:g,b:b}
+      }())
       
       this.doubleFrequency = function() {
         var instances = this.instances
@@ -200,6 +220,7 @@ define(
       var vertexPositions = [];
       var indices = [];
       var vertexNormals = [];
+      var vertexColors = [];
       
       var indexCounter = 0;
       
@@ -209,7 +230,16 @@ define(
         l.push(v.z);
       }
       
-      var addTriangle = function(v1,v2,v3) {
+      var addColor = function(n) {
+        vertexColors.push(n.color.r);
+        vertexColors.push(n.color.g);
+        vertexColors.push(n.color.b);
+      }
+      
+      var addTriangle = function(n1,n2,n3) {
+        var v1 = n1.p;
+        var v2 = n2.p;
+        var v3 = n3.p;
         var a = v3.sub(v1);
         var b = v2.sub(v1);
         var norm = a.cross(b).normalize();
@@ -223,6 +253,10 @@ define(
           indexCounter += 1;
           addVertex(vertexNormals, norm);
         }
+        
+        addColor(n1);
+        addColor(n2);
+        addColor(n3);
         
       }
       
@@ -242,19 +276,8 @@ define(
               var nodeC = u_array[anchor_u + x][anchor_v + y + 1];
               var nodeD = u_array[anchor_u + x + 1][anchor_v + y + 1];
               
-              addTriangle(nodeA.p, nodeC.p, nodeD.p);
-              
-              // upper triangle
-              //indices.push(nodeA.index);
-              //indices.push(nodeC.index);
-              //indices.push(nodeD.index);
-              
-              addTriangle(nodeA.p, nodeD.p, nodeB.p);
-              
-              // lower triangle
-              //indices.push(nodeA.index);
-              //indices.push(nodeD.index);
-              //indices.push(nodeB.index);
+              addTriangle(nodeA, nodeC, nodeD);
+              addTriangle(nodeA, nodeD, nodeB);
               
             }
           }
@@ -265,6 +288,7 @@ define(
       this.vertexPositions = vertexPositions;
       this.indices = indices;
       this.vertexNormals = vertexNormals;
+      this.vertexColors = vertexColors;
       
     }
     

@@ -35,8 +35,8 @@ define(
       };
       */
       this.color = (function(){
-        var r = g = b = 0;
-        test = Math.random();
+        var r = 0, g = 0, b = 0;
+        var test = Math.random();
         
         if (test < 0.6) {b=0.8;}
         else {

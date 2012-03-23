@@ -34,19 +34,22 @@ define(
         b:Math.random()
       };
       */
-      this.color = (function(){
+      this.color = (function(gen){
         var r = 0, g = 0, b = 0;
         var test = Math.random();
         
-        if (test < 0.6) {b=0.8;}
-        else {
+        if (gen == 1) {
+          r = 1;
+        } else if (test < 0.6) {
+          b=0.8;
+        } else {
           r = 0.5 * Math.random();
           g = 0.8;
           b = r;
         }
         
         return {r:r,g:g,b:b}
-      }())
+      }(gen));
       
       this.doubleFrequency = function() {
         var instances = this.instances

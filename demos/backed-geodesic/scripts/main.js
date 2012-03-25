@@ -10,7 +10,7 @@ require(
     gl.enable(gl.DEPTH_TEST);
     gl.clearColor(0,0,0,1);
 
-    var numDoubles = 3;
+    var numDoubles = 2;
     
     var geo = new geodesic.Geodesic();
     for (var i = 0; i < numDoubles; i++) {

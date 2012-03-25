@@ -22,6 +22,7 @@ type D2 = S D1
 type D3 = S D2
 type D4 = S D3
 type D5 = S D4
+type D6 = S D5
 
 -- | Strict ordering constraints for annotated types
 

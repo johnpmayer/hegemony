@@ -159,11 +159,8 @@ instance DF.Foldable (LIV n) where
 instance Functor (LIV n) where
   fmap = map
 
-
-
-
 -- | Finite Series
-{-
+
 class MakeNats n where
   makeNats :: LIV n Int
 
@@ -184,5 +181,3 @@ instance Fillable n => Fillable (S n) where
 
 lengthError :: a
 lengthError = error "unlike lengths"
-
--}

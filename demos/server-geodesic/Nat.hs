@@ -82,3 +82,15 @@ instance Show (Nat n) where
 instance MonoidA Nat where
   mempty = Ze
   mappend = addNat
+
+d0 :: Nat D0
+d0 = Ze
+
+d1 :: Nat D1
+d1 = Su d0
+
+d2 :: Nat D2
+d2 = Su d1
+
+d3 :: Nat D3
+d3 = Su d2

@@ -1,8 +1,9 @@
 
-all: server
+include $(GOROOT)/src/Make.inc
 
-server: server.6
-	6l -o server server.6
+TARG=hegemony
+GOFILES=\
+	server.go\
+	world-gen.go\
 
-server.6: server.go
-	6g server.go
+include $(GOROOT)/src/Make.cmd

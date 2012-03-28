@@ -1,39 +1,37 @@
-
 package main
 
 import (
-	"fmt"
-	"http"
+	"io"
 	"os"
+	
+	"github.com/hoisie/web.go"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello, world")
+func static(ctx *web.Context, rsrc string) {
+
+	file, err := os.Open("static/" + rsrc)
+	check(err)
+	
+	_,err = io.Copy(ctx,file)
+	
+}
+
+func rootRedirect(ctx *web.Context, val string) {
+	ctx.Redirect(303, "static/index.html");
 }
 
 func main() {
-	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
-}
 
-// errorHandler wraps the argument handler with an error-catcher that
-// returns a 500 HTTP error if the request fails (calls check with err non-nil).
-func errorHandler(fn http.HandlerFunc) http.HandlerFunc {
-        return func(w http.ResponseWriter, r *http.Request) {
-                defer func() {
-                        if err, ok := recover().(os.Error); ok {
-                                w.WriteHeader(http.StatusInternalServerError)
-                                fmt.Fprint(w,"500 Internal (TODO)" + err.String())
-				//errorTemplate.Execute(w, err)
-                        }
-                }()
-                fn(w, r)
-        }
+	web.Get("/static/(.*)", static)
+	web.Get("/(.*)", rootRedirect)
+	web.Run("0.0.0.0:8080")
+
 }
 
 // check aborts the current execution if err is non-nil.
 func check(err os.Error) {
-        if err != nil {
-                panic(err)
-        }
+	if err != nil {
+		panic(err)
+	}
 }
+

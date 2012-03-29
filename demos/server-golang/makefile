@@ -1,9 +1,14 @@
+#
+#include $(GOROOT)/src/Make.inc
+#
+#TARG=hegemony
+#GOFILES=\
+#	server.go\
+#	world-gen.go\
+#
+#include $(GOROOT)/src/Make.cmd
+#
 
-include $(GOROOT)/src/Make.inc
+all:
+	go build
 
-TARG=hegemony
-GOFILES=\
-	server.go\
-	world-gen.go\
-
-include $(GOROOT)/src/Make.cmd

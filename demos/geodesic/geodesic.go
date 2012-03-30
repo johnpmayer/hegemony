@@ -1,4 +1,4 @@
-package data
+package geodesic
 
 type UVIndex struct {
 	U, V int

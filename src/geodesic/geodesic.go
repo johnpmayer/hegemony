@@ -1,15 +1,21 @@
 package geodesic
 
+import (
+	. "math"
+	. "vector"
+)
+
 type UVIndex struct {
 	U, V int
 }
 
 type GeoNode struct {
 	Generation int
+	Point      *Vector3
 	Locations  []UVIndex
 }
 
-func MakeGeoNode(u, v, f int) (p *GeoNode) {
+func MakeGeoNode(u, v, f int, vec *Vector3) (p *GeoNode) {
 
 	p = new(GeoNode)
 	p.Generation = f
@@ -45,14 +51,29 @@ func MakeGeodesic() (p *Geodesic) {
 	}
 
 	// Create the canonical copies of the psahedron
-	u_array[0][1] = MakeGeoNode(0, 1, f)
-	u_array[2][0] = MakeGeoNode(2, 0, f)
+	north_pole_point := &Vector3{X: 0, Y: 1, Z: 0}
+	u_array[0][1] = MakeGeoNode(0, 1, f, north_pole_point)
+
+	south_pole_point := &Vector3{X: 0, Y: -1, Z: 0}
+	u_array[2][0] = MakeGeoNode(2, 0, f, south_pole_point)
+
+	lat := Atan(0.5)
 	for i := 0; i < 5; i += 1 {
-		u_array[i][i] = MakeGeoNode(i, i, f)
-		u_array[i][i+1] = MakeGeoNode(i, i+1, f)
+
+		var upper_t float64
+		upper_t = float64(2*i) * Pi / 5.0
+		upper_point := FromSpherical(1, upper_t, lat)
+		u_array[i][i] = MakeGeoNode(i, i, f, upper_point)
+
+		var lower_t float64
+		lower_t = float64(2*i+1) * Pi / 5.0
+		lower_point := FromSpherical(1, lower_t, -lat)
+		u_array[i][i+1] = MakeGeoNode(i, i+1, f, lower_point)
 	}
 
 	p.boundaryScan()
+
+	todo()
 	return
 
 }
@@ -96,15 +117,15 @@ func (p *Geodesic) boundaryScan() {
 		// upper stitch x5
 		for i := 0; i < 5; i += 1 {
 			src_u_base := i * f
-			src_v := (i+1) * f
-			dst_u := ((i+1)%5) * f
-			dst_v_base := ((i+1)%5) * f
+			src_v := (i + 1) * f
+			dst_u := ((i + 1) % 5) * f
+			dst_v_base := ((i + 1) % 5) * f
 			for j := 1; j < f; j += 1 {
 				src_u := src_u_base + j
 				src := u_array[src_u][src_v]
 				if src.Generation == f {
-					dst_v := dst_v_base + (f-j)
-					src.addUV(dst_u,dst_v)
+					dst_v := dst_v_base + (f - j)
+					src.addUV(dst_u, dst_v)
 					u_array[dst_u][dst_v] = src
 				}
 			}
@@ -112,23 +133,23 @@ func (p *Geodesic) boundaryScan() {
 
 		// lower stitch x5
 		for i := 0; i < 5; i += 1 {
-			src_u := (i+2) * f
+			src_u := (i + 2) * f
 			src_v_base := i * f
-			dst_u_base := (((i+1)%5)+1) * f
-			dst_v := ((i+1)%5) * f
+			dst_u_base := (((i + 1) % 5) + 1) * f
+			dst_v := ((i + 1) % 5) * f
 			for j := 1; j < f; j += 1 {
 				src_v := src_v_base + j
 				src := u_array[src_u][src_v]
 				if src.Generation == f {
-					dst_u := dst_u_base + (f-j)
-					src.addUV(dst_u,dst_v)
+					dst_u := dst_u_base + (f - j)
+					src.addUV(dst_u, dst_v)
 					u_array[dst_u][dst_v] = src
 				}
 			}
 		}
-		
+
 	}
-	
+
 }
 
 func (p *Geodesic) DoubleFrequency() {

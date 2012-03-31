@@ -3,7 +3,7 @@ package main
 import (
 	"io"
 	"os"
-	"github.com/jpmayer/web.go"
+	"github.com/hoisie/web.go"
 )
 
 func static(ctx *web.Context, rsrc string) {

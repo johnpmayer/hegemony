@@ -108,11 +108,11 @@ func (p *Geodesic) boundaryScan() {
 		upper_0 := u_array[0][0]
 		upper_0.addUV(5, 5)
 		u_array[5][5] = upper_0
-		
+
 		lower_0 := u_array[1][0]
 		lower_0.addUV(6, 5)
 		u_array[6][5] = lower_0
-		
+
 	} else {
 
 		// mid stitch

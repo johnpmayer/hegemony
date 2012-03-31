@@ -15,17 +15,23 @@ type GeoNode struct {
 	Locations  []UVIndex
 }
 
-func MakeGeoNode(u, v, f int, vec *Vector3) (p *GeoNode) {
+func MakeGeoNode(f, u, v int, vec *Vector3) *GeoNode {
 
-	p = new(GeoNode)
+	p := new(GeoNode)
 	p.Generation = f
 
 	locations := make([]UVIndex, 0, 5)
 	canonical := UVIndex{U: u, V: v}
-
 	p.Locations = append(locations, canonical)
 
-	return
+	p.Point = vec
+
+	return p
+}
+
+func (p *GeoNode) FirstAt(u, v int) bool {
+	loc := p.Locations[0]
+	return (u == loc.U && v == loc.V)
 }
 
 func (p *GeoNode) addUV(u, v int) {
@@ -37,44 +43,43 @@ type Geodesic struct {
 	U_array   [][]*GeoNode // 2d storage of GeoNodes
 }
 
-func MakeGeodesic() (p *Geodesic) {
+func MakeGeodesic() *Geodesic {
 
 	// Initialize the Geodesic, set generation
-	p = new(Geodesic)
+	p := new(Geodesic)
 	f := 1
 	p.Frequency = f
 
-	u_array := make([][]*GeoNode, 6, 6)
+	u_array := make([][]*GeoNode, 7, 7)
 	for u := range u_array {
-		varray := make([]*GeoNode, 5, 5)
+		varray := make([]*GeoNode, 6, 6)
 		u_array[u] = varray
 	}
 
 	// Create the canonical copies of the psahedron
 	north_pole_point := &Vector3{X: 0, Y: 1, Z: 0}
-	u_array[0][1] = MakeGeoNode(0, 1, f, north_pole_point)
+	u_array[0][1] = MakeGeoNode(f, 0, 1, north_pole_point)
 
 	south_pole_point := &Vector3{X: 0, Y: -1, Z: 0}
-	u_array[2][0] = MakeGeoNode(2, 0, f, south_pole_point)
+	u_array[2][0] = MakeGeoNode(f, 2, 0, south_pole_point)
 
 	lat := Atan(0.5)
 	for i := 0; i < 5; i += 1 {
 
-		var upper_t float64
-		upper_t = float64(2*i) * Pi / 5.0
+		upper_t := float64(2*i) * Pi / 5.0
 		upper_point := FromSpherical(1, upper_t, lat)
-		u_array[i][i] = MakeGeoNode(i, i, f, upper_point)
+		u_array[i][i] = MakeGeoNode(f, i, i, upper_point)
 
-		var lower_t float64
-		lower_t = float64(2*i+1) * Pi / 5.0
+		lower_t := float64(2*i+1) * Pi / 5.0
 		lower_point := FromSpherical(1, lower_t, -lat)
-		u_array[i][i+1] = MakeGeoNode(i, i+1, f, lower_point)
+		u_array[i+1][i] = MakeGeoNode(f, i+1, i, lower_point)
 	}
+
+	p.U_array = u_array
 
 	p.boundaryScan()
 
-	todo()
-	return
+	return p
 
 }
 
@@ -83,8 +88,6 @@ func (p *Geodesic) boundaryScan() {
 	f := p.Frequency
 
 	if f == 1 {
-
-		// Just replicate the poles
 
 		north_pole := u_array[0][f]
 		for i := 1; i < 5; i += 1 {
@@ -99,8 +102,17 @@ func (p *Geodesic) boundaryScan() {
 			u := (i + 2) * f
 			v := i * f
 			south_pole.addUV(u, v)
-			u_array[u][v] = north_pole
+			u_array[u][v] = south_pole
 		}
+
+		upper_0 := u_array[0][0]
+		upper_0.addUV(5, 5)
+		u_array[5][5] = upper_0
+		
+		lower_0 := u_array[1][0]
+		lower_0.addUV(6, 5)
+		u_array[6][5] = lower_0
+		
 	} else {
 
 		// mid stitch

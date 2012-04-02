@@ -30,25 +30,28 @@ func scriptHandler(ctx *web.Context, path string) {
 	check(err)
 }
 
-func randomGlobeHandler(ctx *web.Context) {
-
-	geo := geodesic.MakeGeodesic()
-	obj, err := json.Marshal(geo)
-	check(err)
-	ctx.ContentType("json")
-	_, err = ctx.Write(obj)
-	check(err)
-
-}
 
 func main() {
+	
+	globe := geodesic.MakeGeodesic()
+	
+	globeHandler := func (ctx *web.Context) {
+		
+		obj, err := json.Marshal(globe)
+		check(err)
+		ctx.ContentType("json")
+		_, err = ctx.Write(obj)
+		check(err)
+		
+	}
 
+	
 	// Static routers
 	web.Get("/", gamePageHandler)
 	web.Get("/(scripts/.*[.]js)", scriptHandler)
 
 	// Rangom globe
-	web.Get("/randomGlobe", randomGlobeHandler)
+	web.Get("/globe", globeHandler)
 
 	web.Run(":8000")
 

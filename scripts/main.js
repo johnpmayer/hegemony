@@ -1,5 +1,5 @@
 
-require(["jquery","utils"], function($,utils){
+require(["jquery","utils","geodesic"], function($,utils,geodesic){
   
   window.onerror = function(ev){alert("Error:" + ev)};
   
@@ -16,12 +16,10 @@ require(["jquery","utils"], function($,utils){
     
     utils.loadFile("globe", 
              function(responseText){
-               geo = JSON.parse(responseText);
-               alert(geo.U_array.length);
+               var geo = geodesic.initGeodesic(JSON.parse(responseText))
+               var geoMesh = geo.generateMesh()
              },
              true,true);
-    
-    
     
   });
   

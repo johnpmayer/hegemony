@@ -20,7 +20,7 @@ define(function() {
     dot : function(vec2) {
       return this.x * vec.x + this.y * vec2.y + this.z * vec2.z;
     },
-  
+    
     cross : function(vec2) {
       return new Vector3(
         this.y * vec2.z - this.z * vec2.y,

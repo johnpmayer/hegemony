@@ -30,25 +30,41 @@ func scriptHandler(ctx *web.Context, path string) {
 	check(err)
 }
 
+func vertexShaderHandler(ctx *web.Context, path string) {
+	file, err := os.Open(path)
+	check(err)
+	ctx.ContentType("x-shader/x-vertex")
+	_, err = io.Copy(ctx, file)
+	check(err)
+}
+
+func fragmentShaderHandler(ctx *web.Context, path string) {
+	file, err := os.Open(path)
+	check(err)
+	ctx.ContentType("x-shader/x-fragment")
+	_, err = io.Copy(ctx, file)
+	check(err)
+}
 
 func main() {
-	
+
 	globe := geodesic.MakeGeodesic()
-	
-	globeHandler := func (ctx *web.Context) {
-		
+
+	globeHandler := func(ctx *web.Context) {
+
 		obj, err := json.Marshal(globe)
 		check(err)
 		ctx.ContentType("json")
 		_, err = ctx.Write(obj)
 		check(err)
-		
+
 	}
 
-	
 	// Static routers
 	web.Get("/", gamePageHandler)
 	web.Get("/(scripts/.*[.]js)", scriptHandler)
+	web.Get("/(shaders/.*[.]vert)", vertexShaderHandler)
+	web.Get("/(shaders/.*[.]frag)", fragmentShaderHandler)
 
 	// Rangom globe
 	web.Get("/globe", globeHandler)

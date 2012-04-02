@@ -2,10 +2,10 @@
 // geodesic
 
 define(
-  ["utils","vector"],
-  function(utils, vector){
+  ["utils","vector","mesh"],
+  function(utils, vector, mesh){
     
-    function generateMesh() {
+    function generateMesh(geoMesh, callback) {
       
       var f = this.Frequency
       var u_array = this.U_array
@@ -34,8 +34,8 @@ define(
       
       var addTriangle = function(n1,n2,n3) {
         var v1 = vector.convert(n1.Point)
-        var v2 = vector.convert(n1.Point)
-        var v3 = vector.convert(n1.Point)
+        var v2 = vector.convert(n2.Point)
+        var v3 = vector.convert(n3.Point)
         var a = v3.sub(v1);
         var b = v2.sub(v1);
         var norm = a.cross(b).normalize();
@@ -81,14 +81,24 @@ define(
         }
       }
       
-      return {
+      var meshAttributes = {
         
         vertexPositions : vertexPositions,
         indices : indices,
         vertexNormals : vertexNormals,
-        vertexColors : vertexColors
-
+        vertexColors : vertexColors,
+        
+        materials : [{
+          
+          vertexshader : "shaders/geo.vert",
+          fragmentshader : "shaders/geo.frag",
+          numindices : indices.length
+          
+        }]
+        
       }
+      
+      geoMesh.build(meshAttributes, callback)
       
     }
     

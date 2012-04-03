@@ -5,6 +5,9 @@ define(
   ["utils","vector","mesh"],
   function(utils, vector, mesh){
     
+    var seaLevel = 750;
+    var mtnLevel = 900;
+    
     function generateMesh(geoMesh, callback) {
       
       var f = this.Frequency
@@ -24,14 +27,25 @@ define(
       }
       
       var addColor = function(n) {
-        if (n.Elevation > 6600) {
-          vertexColors.push(.7)
+        if (n.Elevation > mtnLevel) {
+          vertexColors.push(.5)
+          vertexColors.push(.5)
+          vertexColors.push(0)
+        } else if (n.Elevation > seaLevel) {
+          vertexColors.push(.4)
           vertexColors.push(.8)
           vertexColors.push(0)
         } else {
-          vertexColors.push(0)
-          vertexColors.push(0)
-          vertexColors.push(.6)
+          // ocean
+          if (n.Point.Y > .8 || n.Point.Y < -.8) {
+            vertexColors.push(.5)
+            vertexColors.push(.5)
+            vertexColors.push(.8)
+          } else {
+            vertexColors.push(0)
+            vertexColors.push(0)
+            vertexColors.push(.6)
+          }
         }
       }
       

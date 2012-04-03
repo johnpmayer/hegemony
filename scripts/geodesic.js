@@ -24,12 +24,15 @@ define(
       }
       
       var addColor = function(n) {
-        for (var i = 0 ; i < 3; i++) {
-          vertexColors.push(Math.random())
+        if (n.Elevation > 6600) {
+          vertexColors.push(.7)
+          vertexColors.push(.8)
+          vertexColors.push(0)
+        } else {
+          vertexColors.push(0)
+          vertexColors.push(0)
+          vertexColors.push(.6)
         }
-        //vertexColors.push(n.color.r);
-        //vertexColors.push(n.color.g);
-        //vertexColors.push(n.color.b);
       }
       
       var addTriangle = function(n1,n2,n3) {

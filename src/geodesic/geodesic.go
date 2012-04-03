@@ -1,7 +1,9 @@
 package geodesic
 
 import (
+	"crypto/rand"
 	. "math"
+	"math/big"
 	. "vector"
 )
 
@@ -13,19 +15,29 @@ type GeoNode struct {
 	Generation int
 	Point      *Vector3
 	Locations  []UVIndex
+	Elevation  int
 }
 
-func MakeGeoNode(f, u, v int, vec *Vector3) *GeoNode {
+const MAX_ELEVATION = 10000
 
+func MakeGeoNode(f, u, v int, vec *Vector3) *GeoNode {
+	
 	p := new(GeoNode)
 	p.Generation = f
-
+	
 	locations := make([]UVIndex, 0, 5)
 	canonical := UVIndex{U: u, V: v}
 	p.Locations = append(locations, canonical)
-
+	
 	p.Point = vec
-
+	
+	elevation, err := rand.Int(rand.Reader, big.NewInt(MAX_ELEVATION))
+	if err != nil {
+		panic(err.Error())
+	}
+	
+	p.Elevation = int(elevation.Int64())
+	
 	return p
 }
 

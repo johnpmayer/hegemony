@@ -215,6 +215,10 @@ define(function() {
     --globalGLMatrixState.modelStackTop;
   }
   
+  function unProject(winX, winY, winZ, viewX, viewY) {
+    
+  }
+  
   return {
     Matrix4x3 : Matrix4x3,
     Matrix4x4 : Matrix4x4,
@@ -222,7 +226,8 @@ define(function() {
     projectionMatrix : projectionMatrix,
     viewMatrix : viewMatrix,
     pushModelMatrix : pushModelMatrix,
-    popModelMatrix : popModelMatrix
+    popModelMatrix : popModelMatrix,
+    unProject : unProject
   }
   
 });

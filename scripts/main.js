@@ -65,7 +65,7 @@ require(
         
         //geoScene.local.makeRotate(phi,1,0,0);
         //geoScene.local.multiply(new matrix.Matrix4x3().makeRotate(theta,0,1,0));
-
+        
         var camera = new matrix.Matrix4x3().makeIdentity();
         camera.multiply(new matrix.Matrix4x3().makeRotate(theta,0,1,0))
         camera.multiply(new matrix.Matrix4x3().makeRotate(phi,1,0,0))
@@ -75,6 +75,11 @@ require(
         geoScene.draw();
         
       }
+      
+      $("#c").click(function(ev){
+        
+        alert("Clicked the canvas: " + ev.offsetX + " " + ev.offsetY)
+      })
       
       utils.loadFile("globe", 
                      function(responseText){

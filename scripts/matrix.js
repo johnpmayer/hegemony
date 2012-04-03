@@ -40,6 +40,13 @@ define(function() {
       return this;
     },
     
+    makeTranslate : function(x,y,z) {
+      this.d[12] = x
+      this.d[13] = y
+      this.d[14] = z
+      return this
+    },
+    
     makeRotate : function(angle, x, y, z) {
       var invlen = 1 / Math.sqrt(x*x + y*y + z*z);
       var n = { x : invlen * x,

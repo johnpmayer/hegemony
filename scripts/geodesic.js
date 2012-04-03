@@ -5,8 +5,9 @@ define(
   ["utils","vector","mesh"],
   function(utils, vector, mesh){
     
+    var deepLevel = 300;
     var seaLevel = 650;
-    var mtnLevel = 850;
+    var mtnLevel = 900;
     
     function generateMesh(geoMesh, callback) {
       
@@ -41,6 +42,11 @@ define(
             vertexColors.push(.5)
             vertexColors.push(.5)
             vertexColors.push(.8)
+          } else if (n.Elevation < deepLevel) {
+            vertexColors.push(.1)
+            vertexColors.push(.1)
+            vertexColors.push(.5)
+            
           } else {
             vertexColors.push(0)
             vertexColors.push(0)

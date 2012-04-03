@@ -16,12 +16,16 @@ require(
       gl.clearColor(0,0,0,1);
       
       var geoMesh = new mesh.Mesh(gl)
-      var camera = new matrix.Matrix4x3();
       var geoScene = new scene.DAGNode([new scene.Geometry(geoMesh)])
-      var theta = 0, phi = 0
+      var theta = 0, phi = 0, zoom = 5
       
-      var keyMappings = {'37':'spinleft','38':'tiltup','39':'spinright','40':'tiltdown',
-                         '90':'zoomin','88':'zoomout'};
+      var keyMappings = {'37':'spinleft',
+                         '38':'tiltup',
+                         '39':'spinright',
+                         '40':'tiltdown',
+                         '90':'zoomin',
+                         '88':'zoomout'};
+
       var actions = {};
       
       window.onkeydown = function(e) {
@@ -44,24 +48,32 @@ require(
         }
       }
       
-      
       var draw = function() {
         
         theta += 0.01 * (actions.spinright ? -1 : 0 + actions.spinleft ? 1 : 0);
         phi += 0.01 * (actions.tiltup ? -1 : 0 + actions.tiltdown ? 1 : 0);
+        zoom += .1 * (actions.zoomin ? -1 : 0 + actions.zoomout ? 1 : 0)
         
         phi = Math.max(-Math.PI/3, phi);
         phi = Math.min(Math.PI/3, phi);
         
+        zoom = Math.max(3, zoom)
+        zoom = Math.min(zoom, 8)
+        
         utils.requestAnimationFrame(draw, c);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         
-        geoScene.local.makeRotate(phi,1,0,0);
-        geoScene.local.multiply(new matrix.Matrix4x3().makeRotate(theta,0,1,0));
-        camera.d[14] = 5;
+        //geoScene.local.makeRotate(phi,1,0,0);
+        //geoScene.local.multiply(new matrix.Matrix4x3().makeRotate(theta,0,1,0));
+
+        var camera = new matrix.Matrix4x3().makeIdentity();
+        camera.multiply(new matrix.Matrix4x3().makeRotate(theta,0,1,0))
+        camera.multiply(new matrix.Matrix4x3().makeRotate(phi,1,0,0))
+        camera.multiply(new matrix.Matrix4x3().makeTranslate(0,0,zoom))
+        
         matrix.viewMatrix().makeInverseRigidBody(camera);
         geoScene.draw();
-                        
+        
       }
       
       utils.loadFile("globe", 
@@ -70,8 +82,6 @@ require(
                        geo.generateMesh(geoMesh,draw)
                      },
                      true,true);
-      
-      
       
     });
     

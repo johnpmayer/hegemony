@@ -5,13 +5,13 @@ define(
   ["utils","vector","mesh"],
   function(utils, vector, mesh){
     
-    var seaLevel = 750;
-    var mtnLevel = 900;
+    var seaLevel = 650;
+    var mtnLevel = 850;
     
     function generateMesh(geoMesh, callback) {
       
       var f = this.Frequency
-      var u_array = this.U_array
+      var u_array = this.U_Array
       
       var vertexPositions = [];
       var indices = [];

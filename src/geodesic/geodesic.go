@@ -29,18 +29,18 @@ const MAX_ELEVATION = 1000
 func randomElevation(min, max int) int {
 
 	spread := max - min
-	
+
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println(spread)
 			panic(r)
 		}
 	}()
-	
+
 	if spread == 0 {
 		return min
 	}
-	
+
 	elevation, err := rand.Int(rand.Reader, big.NewInt(int64(spread)))
 	if err != nil {
 		panic(err.Error())
@@ -95,20 +95,20 @@ func minmax(a, b int) (min, max int) {
 func interpolate(f, u, v int, n1, n2 *GeoNode) *GeoNode {
 
 	vec := Midpoint(n1.Point, n2.Point).Normalize()
-	
+
 	el_min, el_max := minmax(n1.Elevation, n2.Elevation)
-	
+
 	el := randomElevation(el_min, el_max)
-	
+
 	return MakeGeoNode(f, u, v, el, vec)
 }
 
 type Geodesic struct {
 	Frequency int          // generation 0 denotes icosahedron
-	U_array   [][]*GeoNode // 2d storage of GeoNodes
+	U_Array   [][]*GeoNode // 2d storage of GeoNodes
 }
 
-func MakeGeodesic() *Geodesic {
+func MakeGeodesic(phase1, phase2 int) *Geodesic {
 
 	// Initialize the Geodesic, set generation
 	p := new(Geodesic)
@@ -123,33 +123,56 @@ func MakeGeodesic() *Geodesic {
 
 	// Create the canonical copies of the psahedron
 	north_pole_point := &Vector3{X: 0, Y: 1, Z: 0}
-	u_array[0][1] = MakeGeoNode(f, 0, 1, randomElevation(0, MAX_ELEVATION), north_pole_point)
+	u_array[0][1] = MakeGeoNode(f, 0, 1, 0, north_pole_point)
 
 	south_pole_point := &Vector3{X: 0, Y: -1, Z: 0}
-	u_array[2][0] = MakeGeoNode(f, 2, 0, randomElevation(0, MAX_ELEVATION), south_pole_point)
+	u_array[2][0] = MakeGeoNode(f, 2, 0, 0, south_pole_point)
 
 	lat := Atan(0.5)
 	for i := 0; i < 5; i += 1 {
 
 		upper_t := float64(2*i) * Pi / 5.0
 		upper_point := FromSpherical(1, upper_t, lat)
-		u_array[i][i] = MakeGeoNode(f, i, i, randomElevation(0, MAX_ELEVATION), upper_point)
+		u_array[i][i] = MakeGeoNode(f, i, i, 0, upper_point)
 
 		lower_t := float64(2*i+1) * Pi / 5.0
 		lower_point := FromSpherical(1, lower_t, -lat)
-		u_array[i+1][i] = MakeGeoNode(f, i+1, i, randomElevation(0, MAX_ELEVATION), lower_point)
+		u_array[i+1][i] = MakeGeoNode(f, i+1, i, 0, lower_point)
 	}
 
-	p.U_array = u_array
+	p.U_Array = u_array
 
 	p.boundaryScan()
+
+	for i := 0; i < phase1; i += 1 {
+		p.doubleFrequency()
+	}
+	p.generateElevation()
+	for i := 0; i < phase2; i += 1 {
+		p.doubleFrequency()
+	}
 
 	return p
 
 }
 
+func (p *Geodesic) generateElevation() {
+
+	u_array := p.U_Array
+	for u := 0; u < len(u_array); u += 1 {
+		v_array := u_array[u]
+		for v := 0; v < len(v_array); v += 1 {
+			node := v_array[v]
+			if node != nil {
+				node.Elevation = randomElevation(0, MAX_ELEVATION)
+			}
+		}
+	}
+
+}
+
 func (p *Geodesic) boundaryScan() {
-	u_array := p.U_array
+	u_array := p.U_Array
 	f := p.Frequency
 
 	if f == 1 {
@@ -229,7 +252,7 @@ func (p *Geodesic) boundaryScan() {
 
 }
 
-func (p *Geodesic) DoubleFrequency() {
+func (p *Geodesic) doubleFrequency() {
 
 	f := p.Frequency * 2
 	u_len := 6*f + 1
@@ -242,8 +265,8 @@ func (p *Geodesic) DoubleFrequency() {
 	}
 
 	// copy old nodes
-	for u := 0; u < len(p.U_array); u += 1 {
-		old_v_array := p.U_array[u]
+	for u := 0; u < len(p.U_Array); u += 1 {
+		old_v_array := p.U_Array[u]
 		v_array := u_array[2*u]
 		for v := 0; v < len(old_v_array); v += 1 {
 			node := old_v_array[v]
@@ -303,7 +326,7 @@ func (p *Geodesic) DoubleFrequency() {
 	//todo()
 
 	p.Frequency = f
-	p.U_array = u_array
+	p.U_Array = u_array
 	p.boundaryScan()
 
 	return

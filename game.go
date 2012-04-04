@@ -69,6 +69,6 @@ func main() {
 	// Rangom globe
 	web.Get("/globe", globeHandler)
 
-	web.Run(":8000")
+	web.Run(":8080")
 
 }

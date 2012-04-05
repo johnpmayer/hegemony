@@ -1,7 +1,7 @@
 
 // matrix
 
-define(function() {
+define(["vector"],function(vector) {
   
   function Matrix4x3() {
     this.d = new Float32Array(16);
@@ -172,6 +172,87 @@ define(function() {
                 A,B,C,-1, 
                 0,0,D,0);
       return this;
+    },
+
+    multiply : function(m) {
+      
+      var result = new Float32Array(16);
+      
+      for(var k=0; k<=12; k+=4){
+        for(var i=0; i<4; i++){
+          for (var j=0, bCount=0; j<4; j++, bCount+=4){
+            result[k+i] += this.d[k+j%4] * m.d[bCount+i%4];
+          }
+        }
+      }
+      
+      this.d = result
+      
+    },
+    
+    multiplyVector3 : function(vec) {
+      
+      var x = this.d[0]*vec.x + this.d[4]*vec.y + this.d[8] *vec.z + this.d[12]
+      var y = this.d[1]*vec.x + this.d[5]*vec.y + this.d[9] *vec.z + this.d[13]
+      var z = this.d[2]*vec.x + this.d[6]*vec.y + this.d[10]*vec.z + this.d[14]
+      
+      //var x = this.d[0]*vec.x + this.d[1]*vec.y + this.d[2] *vec.z + this.d[3]
+      //var y = this.d[4]*vec.x + this.d[5]*vec.y + this.d[6] *vec.z + this.d[7]
+      //var z = this.d[8]*vec.x + this.d[9]*vec.y + this.d[10]*vec.z + this.d[11]
+      
+      return new vector.Vector3(x,y,z)
+      
+    },
+    
+    computeInverse : function() {
+      
+      var inv = new Matrix4x4();
+      
+      inv.d[0] = this.d[5] * this.d[10] * this.d[15] - this.d[5] * this.d[11] * this.d[14] - this.d[9] * this.d[6] * this.d[15] +
+        this.d[9] * this.d[7] * this.d[14] + this.d[13] * this.d[6] * this.d[11] - this.d[13] * this.d[7] * this.d[10];
+      inv.d[4] = -this.d[4] * this.d[10] * this.d[15] + this.d[4] * this.d[11] * this.d[14] + this.d[8] * this.d[6] * this.d[15] -
+        this.d[8] * this.d[7] * this.d[14] - this.d[12] * this.d[6] * this.d[11] + this.d[12] * this.d[7] * this.d[10];
+      inv.d[8] = this.d[4] * this.d[9] * this.d[15] - this.d[4] * this.d[11] * this.d[13] - this.d[8] * this.d[5] * this.d[15] +
+        this.d[8] * this.d[7] * this.d[13] + this.d[12] * this.d[5] * this.d[11] - this.d[12] * this.d[7] * this.d[9];
+      inv.d[12] = -this.d[4] * this.d[9] * this.d[14] + this.d[4] * this.d[10] * this.d[13] + this.d[8] * this.d[5] * this.d[14] -
+        this.d[8] * this.d[6] * this.d[13] - this.d[12] * this.d[5] * this.d[10] + this.d[12] * this.d[6] * this.d[9];
+      inv.d[1] = -this.d[1] * this.d[10] * this.d[15] + this.d[1] * this.d[11] * this.d[14] + this.d[9] * this.d[2] * this.d[15] -
+        this.d[9] * this.d[3] * this.d[14] - this.d[13] * this.d[2] * this.d[11] + this.d[13] * this.d[3] * this.d[10];
+      inv.d[5] = this.d[0] * this.d[10] * this.d[15] - this.d[0] * this.d[11] * this.d[14] - this.d[8] * this.d[2] * this.d[15] +
+        this.d[8] * this.d[3] * this.d[14] + this.d[12] * this.d[2] * this.d[11] - this.d[12] * this.d[3] * this.d[10];
+      inv.d[9] = -this.d[0] * this.d[9] * this.d[15] + this.d[0] * this.d[11] * this.d[13] + this.d[8] * this.d[1] * this.d[15] -
+        this.d[8] * this.d[3] * this.d[13] - this.d[12] * this.d[1] * this.d[11] + this.d[12] * this.d[3] * this.d[9];
+      inv.d[13] = this.d[0] * this.d[9] * this.d[14] - this.d[0] * this.d[10] * this.d[13] - this.d[8] * this.d[1] * this.d[14] +
+        this.d[8] * this.d[2] * this.d[13] + this.d[12] * this.d[1] * this.d[10] - this.d[12] * this.d[2] * this.d[9];
+      inv.d[2] = this.d[1] * this.d[6] * this.d[15] - this.d[1] * this.d[7] * this.d[14] - this.d[5] * this.d[2] * this.d[15] +
+        this.d[5] * this.d[3] * this.d[14] + this.d[13] * this.d[2] * this.d[7] - this.d[13] * this.d[3] * this.d[6];
+      inv.d[6] = -this.d[0] * this.d[6] * this.d[15] + this.d[0] * this.d[7] * this.d[14] + this.d[4] * this.d[2] * this.d[15] -
+        this.d[4] * this.d[3] * this.d[14] - this.d[12] * this.d[2] * this.d[7] + this.d[12] * this.d[3] * this.d[6];
+      inv.d[10] = this.d[0] * this.d[5] * this.d[15] - this.d[0] * this.d[7] * this.d[13] - this.d[4] * this.d[1] * this.d[15] +
+        this.d[4] * this.d[3] * this.d[13] + this.d[12] * this.d[1] * this.d[7] - this.d[12] * this.d[3] * this.d[5];
+      inv.d[14] = -this.d[0] * this.d[5] * this.d[14] + this.d[0] * this.d[6] * this.d[13] + this.d[4] * this.d[1] * this.d[14] -
+        this.d[4] * this.d[2] * this.d[13] - this.d[12] * this.d[1] * this.d[6] + this.d[12] * this.d[2] * this.d[5];
+      inv.d[3] = -this.d[1] * this.d[6] * this.d[11] + this.d[1] * this.d[7] * this.d[10] + this.d[5] * this.d[2] * this.d[11] -
+        this.d[5] * this.d[3] * this.d[10] - this.d[9] * this.d[2] * this.d[7] + this.d[9] * this.d[3] * this.d[6];
+      inv.d[7] = this.d[0] * this.d[6] * this.d[11] - this.d[0] * this.d[7] * this.d[10] - this.d[4] * this.d[2] * this.d[11] +
+        this.d[4] * this.d[3] * this.d[10] + this.d[8] * this.d[2] * this.d[7] - this.d[8] * this.d[3] * this.d[6];
+      inv.d[11] = -this.d[0] * this.d[5] * this.d[11] + this.d[0] * this.d[7] * this.d[9] + this.d[4] * this.d[1] * this.d[11] -
+        this.d[4] * this.d[3] * this.d[9] - this.d[8] * this.d[1] * this.d[7] + this.d[8] * this.d[3] * this.d[5];
+      inv.d[15] = this.d[0] * this.d[5] * this.d[10] - this.d[0] * this.d[6] * this.d[9] - this.d[4] * this.d[1] * this.d[10] +
+        this.d[4] * this.d[2] * this.d[9] + this.d[8] * this.d[1] * this.d[6] - this.d[8] * this.d[2] * this.d[5];
+      
+      var det = this.d[0] * inv.d[0] + this.d[1] * inv.d[4] + this.d[2] * inv.d[8] + this.d[3] * inv.d[12];
+      
+      if(det == 0) {return null}
+      
+      var recDet = 1/det
+      
+      for (var i = 0; i < 16; i += 1) {
+        inv.d[i] *= recDet
+      }
+      
+      return inv;
+      
     }
     
   };

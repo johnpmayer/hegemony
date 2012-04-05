@@ -2,8 +2,10 @@
 // mesh
 
 define(
-  ["utils", "matrix"],
-  function(utils, matrix){
+  ["utils"],
+  function(utils){
+    
+    //var m = mjs.M4x4
     
     function Mesh(gl) {
       
@@ -113,13 +115,13 @@ define(
       this.setMatrixUniforms = function(program) {
         gl.uniformMatrix4fv(program.mMatrixUniform, 
                             false,
-                            matrix.modelMatrix().d);
+                            utils.modelMatrix());
         gl.uniformMatrix4fv(program.pMatrixUniform, 
                             false, 
-                            matrix.projectionMatrix().d)
+                            utils.projectionMatrix())
         gl.uniformMatrix4fv(program.vMatrixUniform, 
                             false, 
-                            matrix.viewMatrix().d)
+                            utils.viewMatrix())
       }
       
       this.draw = function() {

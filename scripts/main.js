@@ -1,7 +1,9 @@
 
 require(
-  ["jquery","utils","geodesic","mesh","scene","matrix","vector"], 
-  function($,utils,geodesic,mesh,scene,matrix,vector){
+  ["jquery","utils","geodesic","mesh","scene","mjs"], 
+  function($,utils,geodesic,mesh,scene,mjs){
+    
+    var m = mjs.M4x4
     
     window.onerror = function(ev){alert("Error:" + ev)};
     
@@ -17,7 +19,7 @@ require(
       
       var geoMesh = new mesh.Mesh(gl)
       var geoScene = new scene.DAGNode([new scene.Geometry(geoMesh)])
-      var camera = new matrix.Matrix4x3();
+      var camera = m.clone(m.I)
       var theta = 0, phi = 0, zoom = 5
       
       var keyMappings = {'37':'spinleft',
@@ -68,57 +70,22 @@ require(
         utils.requestAnimationFrame(draw, c);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         
-        camera.makeIdentity();
-        camera.multiply(new matrix.Matrix4x3().makeRotate(theta,0,1,0))
-        camera.multiply(new matrix.Matrix4x3().makeRotate(phi,1,0,0))
-        camera.multiply(new matrix.Matrix4x3().makeTranslate(0,0,zoom))
+        camera = m.clone(m.I);
+        camera = m.mul(camera, m.makeRotate(theta,[0,1,0]))
+        camera = m.mul(camera, m.makeRotate(phi, [1,0,0]))
+        camera = m.mul(camera, m.makeTranslate3(0,0,zoom))
         
-        matrix.viewMatrix().makeInverseRigidBody(camera);
+        utils.setViewMatrix(m.inverseOrthonormal(camera))
         geoScene.draw();
         
-        var log = "Camera:"+camera.d[12]
-          +","+camera.d[13]
-          +","+camera.d[14]
-          +"<br>"+JSON.stringify(camera.d)
+        var log = "Camera:"+camera[12]
+          +","+camera[13]
+          +","+camera[14]
+        
         
         $("#camera_log").html(log)
         
       }
-      
-      $("#c").click(function(ev){
-        
-        var log = "Clicked the canvas: " + ev.offsetX + " " + ev.offsetY
-        
-        // gl_Position = proj * view * (model * modelPosition)
-        // gl_Position = proj * view * scenePos
-        // proj-1 * gl_Position = view * scenePos
-        // view-1 * (proj-1 * gl_Position) = scenePos
-        // view-1 * (viewPos)              = scenePos
-        
-        var glX = (ev.offsetX / 600) * 2 - 1
-        var glY = 1 - (ev.offsetY / 600) * 2
-        var glZ = 100
-        
-        var glPosition = new vector.Vector3(glX, glY, glZ)
-        
-        log += "<br>glPosition" + JSON.stringify(glPosition);
-        
-        var unproject = new matrix.Matrix4x4()
-        
-        
-        unproject.multiply(matrix.projectionMatrix())        
-        
-        unproject.multiply(matrix.viewMatrix())
-
-        
-        unproject = unproject.computeInverse()
-        
-        var scenePos = unproject.multiplyVector3(glPosition)
-        
-        log += "<br>ScenePosition" + JSON.stringify(scenePos)
-        
-        $("#mouse_log").html(log)
-      })
       
       utils.loadFile("globe", 
                      function(responseText){

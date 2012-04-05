@@ -1,7 +1,7 @@
 
 // webgl
 
-define(function(){
+define(["mjs"],function(mjs){
   
   function createShader(gl, str, type) {
     var shader = gl.createShader(type);
@@ -109,15 +109,59 @@ define(function(){
     clearTimeout(id);
   }
   
+  var m = mjs.M4x4
+  
+  var globalGLMatrixState = {
+    modelMatrix : [ m.clone(m.I), m.clone(m.I) ],
+    projectionMatrix : m.makePerspective(45, 1, 0.01, 100),
+    viewMatrix : m.clone(m.I),
+    modelStackTop : 0
+  };
+  
+  function modelMatrix() {
+    return globalGLMatrixState.modelMatrix[globalGLMatrixState.modelStackTop];
+  }
+  
+  function projectionMatrix () {
+    return globalGLMatrixState.projectionMatrix;
+  }
+  
+  function setViewMatrix(mat) {
+    globalGLMatrixState.viewMatrix = mat
+  }
+  
+  function viewMatrix() {
+    return globalGLMatrixState.viewMatrix;
+  }
+  
+  function pushModelMatrix(mat) {
+    ++globalGLMatrixState.modelStackTop;
+    
+    var top = globalGLMatrixState.modelMatrix[globalGLMatrixState.modelStackTop];
+    var parent = globalGLMatrixState.modelMatrix[globalGLMatrixState.modelStackTop-1];
+    
+    top = m.mul(parent, mat)
+    
+  }
+  
+  function popModelMatrix() {
+    --globalGLMatrixState.modelStackTop;
+  }
+  
   return {
     createShader : createShader,
     createProgram : createProgram,
-    //screenQuad,screenQuad,
     linkProgram : linkProgram,
     loadFile : loadFile,
     loadProgram : loadProgram,
     requestAnimationFrame : requestAnimationFrame,
-    cancelAnimationFrame : cancelAnimationFrame
+    cancelAnimationFrame : cancelAnimationFrame,
+    pushModelMatrix : pushModelMatrix,
+    popModelMatrix : popModelMatrix,
+    viewMatrix : viewMatrix,
+    setViewMatrix : setViewMatrix,
+    modelMatrix : modelMatrix,
+    projectionMatrix : projectionMatrix
   };
   
 })

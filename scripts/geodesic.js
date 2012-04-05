@@ -2,8 +2,10 @@
 // geodesic
 
 define(
-  ["utils","vector","mesh"],
-  function(utils, vector, mesh){
+  ["utils","mesh","mjs"],
+  function(utils, mesh, mjs){
+    
+    var v = mjs.V3
     
     var deepLevel = 300;
     var seaLevel = 650;
@@ -55,13 +57,17 @@ define(
         }
       }
       
+      var convert = function(p) {
+        return v.$(p.X, p.Y, p.Z)
+      }
+      
       var addTriangle = function(n1,n2,n3) {
-        var v1 = vector.convert(n1.Point)
-        var v2 = vector.convert(n2.Point)
-        var v3 = vector.convert(n3.Point)
-        var a = v3.sub(v1);
-        var b = v2.sub(v1);
-        var norm = a.cross(b).normalize();
+        var v1 = convert(n1.Point)
+        var v2 = convert(n2.Point)
+        var v3 = convert(n3.Point)
+        var a = v.sub(v3,v1)
+        var b = v.sub(v2,v1)
+        var norm = v.normalize(v.cross(a,b))
         
         addVertex(vertexPositions, v1);
         addVertex(vertexPositions, v2);

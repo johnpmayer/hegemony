@@ -2,21 +2,23 @@
 // scene
 
 define(
-  ["matrix"],
-  function(matrix) {
+  ["utils","mjs"],
+  function(utils,mjs) {
+    
+    var m = mjs.M4x4
     
     function DAGNode(ch) {
-      this.local = new matrix.Matrix4x3();
+      this.local = m.clone(m.I)
       this.children = ch ? ch : [];
     }
     
     DAGNode.prototype = {
       draw : function() {
-        matrix.pushModelMatrix().multiply(this.local);
+        utils.pushModelMatrix(this.local)
         for (var c in this.children) {
           this.children[c].draw();
         }
-        matrix.popModelMatrix();
+        utils.popModelMatrix();
       }
     };
     

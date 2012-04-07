@@ -1,7 +1,7 @@
 
 // vector
 
-define(function() {
+define(["mjs"], function(mjs) {
 
   var Vector3 = function (x,y,z) {
     
@@ -16,6 +16,10 @@ define(function() {
   }
   
   Vector3.prototype = {
+    
+    toMJS : function() {
+      return mjs.V3.$(this.x, this.y, this.z)
+    },
     
     dot : function(vec2) {
       return this.x * vec.x + this.y * vec2.y + this.z * vec2.z;
@@ -71,7 +75,7 @@ define(function() {
     }
     
   };
-
+  
   // 0 <= theta < 2 * Math.PI
   // -Math.PI <= phi <= Math.PI
   var fromSpherical = function(r, theta, phi) {

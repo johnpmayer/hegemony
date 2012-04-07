@@ -1,7 +1,7 @@
 
 require(
-  ["jquery","utils","geodesic","mesh","scene","matrix","vector"], 
-  function($,utils,geodesic,mesh,scene,matrix,vector){
+  ["jquery","utils","geodesic","mesh","scene","matrix","vector","mjs"], 
+  function($,utils,geodesic,mesh,scene,matrix,vector,mjs){
     
     window.onerror = function(ev){alert("Error:" + ev)};
     
@@ -55,6 +55,8 @@ require(
       
       var draw = function() {
         
+        var log = ""
+        
         theta += 0.05 * (actions.spinright ? -1 : 0 + actions.spinleft ? 1 : 0);
         phi += 0.05 * (actions.tiltup ? -1 : 0 + actions.tiltdown ? 1 : 0);
         zoom += .1 * (actions.zoomin ? -1 : 0 + actions.zoomout ? 1 : 0)
@@ -62,21 +64,25 @@ require(
         phi = Math.max(-Math.PI/3, phi);
         phi = Math.min(Math.PI/3, phi);
         
-        zoom = Math.max(3, zoom)
-        zoom = Math.min(zoom, 8)
+        zoom = Math.max(2, zoom)
+        zoom = Math.min(zoom, 20)
         
         utils.requestAnimationFrame(draw, c);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         
-        camera.makeIdentity();
-        camera.multiply(new matrix.Matrix4x3().makeRotate(theta,0,1,0))
-        camera.multiply(new matrix.Matrix4x3().makeRotate(phi,1,0,0))
-        camera.multiply(new matrix.Matrix4x3().makeTranslate(0,0,zoom))
+        var eye = vector.fromSpherical(zoom, theta, phi).toMJS()
+        var center = new vector.Vector3(0,0,0).toMJS()
+        var up = new vector.Vector3(0,1,0).toMJS()
         
-        matrix.viewMatrix().makeInverseRigidBody(camera);
+        log += "<br>Eye: " + JSON.stringify(eye)
+        log += "<br>Center: " + JSON.stringify(center)
+        log += "<br>Up: " + JSON.stringify(up)
+        
+        matrix.viewMatrix().fromMJS(mjs.M4x4.makeLookAt(eye, center, up))
+        
         geoScene.draw();
         
-        var log = "Camera:"+camera.d[12]
+        log += "<br>Camera:"+camera.d[12]
           +","+camera.d[13]
           +","+camera.d[14]
           +"<br>"+JSON.stringify(camera.d)
@@ -89,35 +95,11 @@ require(
         
         var log = "Clicked the canvas: " + ev.offsetX + " " + ev.offsetY
         
-        // gl_Position = proj * view * (model * modelPosition)
-        // gl_Position = proj * view * scenePos
-        // proj-1 * gl_Position = view * scenePos
-        // view-1 * (proj-1 * gl_Position) = scenePos
-        // view-1 * (viewPos)              = scenePos
-        
-        var glX = (ev.offsetX / 600) * 2 - 1
-        var glY = 1 - (ev.offsetY / 600) * 2
-        var glZ = 100
-        
-        var glPosition = new vector.Vector3(glX, glY, glZ)
-        
-        log += "<br>glPosition" + JSON.stringify(glPosition);
-        
-        var unproject = new matrix.Matrix4x4()
-        
-        
-        unproject.multiply(matrix.projectionMatrix())        
-        
-        unproject.multiply(matrix.viewMatrix())
-
-        
-        unproject = unproject.computeInverse()
-        
-        var scenePos = unproject.multiplyVector3(glPosition)
-        
-        log += "<br>ScenePosition" + JSON.stringify(scenePos)
+        var xRatio = (ev.offsetX / 600) * 2 - 1
+        var yRatio = 1 - (ev.offsetY / 600) * 2
         
         $("#mouse_log").html(log)
+        
       })
       
       utils.loadFile("globe", 

@@ -1838,6 +1838,6 @@ define(function(){
     return r;
   };
   
-  return { V3:V3, M4:M4 }
+  return { V3:V3, M4x4:M4x4 }
   
 })

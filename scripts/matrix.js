@@ -116,7 +116,12 @@ define(["vector"],function(vector) {
       this.d[10] = m.d[10];
       
       return this;
+    },
+
+    fromMJS : function(m4x4) {
+      this.d = m4x4;
     }
+    
     
   };
   
@@ -204,6 +209,13 @@ define(["vector"],function(vector) {
       
     },
     
+    fromMJS : function(m4x4) {
+      this.d = m4x4;
+    }
+    
+    //,
+    
+    /*
     computeInverse : function() {
       
       var inv = new Matrix4x4();
@@ -254,6 +266,7 @@ define(["vector"],function(vector) {
       return inv;
       
     }
+    */
     
   };
   

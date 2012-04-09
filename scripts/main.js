@@ -105,6 +105,33 @@ require(
       utils.loadFile("globe", 
                      function(responseText){
                        var geo = geodesic.initGeodesic(JSON.parse(responseText))
+                       
+                       /*
+                         var count = 0
+                         var neighborFreq = [0,0,0,0,0,0,0,0,0]
+                         
+                         for (var u = 0; u < geo.U_Array.length; u += 1) {
+                         var v_array = geo.U_Array[u]
+                         for (var v = 0; v < v_array.length; v += 1) {
+                         var node = v_array[v]
+                         if (node && 
+                         node.Locations[0].U === u &&
+                         node.Locations[0].V === v) {
+                         count += 1
+                         var numNeighbors = geo.nodeNeighbors(node).length
+                         if (numNeighbors !== 6) {
+                         alert("Anomoly at: " + u + " " + v + " " + numNeighbors
+                         + "\n" + JSON.stringify(geo.nodeNeighbors(node))
+                         )
+                         }
+                         neighborFreq[numNeighbors] += 1
+                         }
+                         }
+                         }
+                         
+                         alert(count + " " + neighborFreq)
+                       */
+                       
                        geo.generateMesh(geoMesh,draw)
                      },
                      true,true);

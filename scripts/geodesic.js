@@ -9,6 +9,60 @@ define(
     var seaLevel = 650;
     var mtnLevel = 900;
     
+    var nodeNeighbors = function(that){ 
+      return function(node) {
+        var neighbors = []
+        var locations = node.Locations
+        
+        for (var i = 0; i < locations.length; i += 1) {
+          var index = locations[i]
+          var u = index.U
+          var v = index.V
+          
+          var tryNode = function(u1, v1) {
+            if (u1 === u && v1 === v) return
+            
+            var v_array = that.U_Array[u1]
+            if (v_array) {
+              var node1 = v_array[v1]
+              if (node1
+                  //&& node1.Locations[0].U === u1
+                  //&& node1.Locations[0].V === v1
+                 ) {
+                // skip if this node is canonically equal to the source node
+                if (node1.Locations[0].U === node.Locations[0].U &&
+                    node1.Locations[0].V === node.Locations[0].V) {
+                  return
+                }
+                // skip if this node is caonically equal to a node
+                // already accounted for
+                for (var j = 0; j < neighbors.length; j++) {
+                  if (neighbors[j].Locations[0].U === node1.Locations[0].U &&
+                      neighbors[j].Locations[0].V === node1.Locations[0].V) {
+                    return
+                  }
+                }
+                neighbors.push(node1)
+              }
+            }
+            
+          }
+          
+          tryNode(u-1, v-1)
+          tryNode(u-1, v)
+          tryNode(u, v-1)
+          tryNode(u, v+1)
+          tryNode(u+1, v)
+          tryNode(u+1, v+1)
+          
+        }
+        
+        return neighbors
+        
+      }
+      
+    }
+    
     function generateMesh(geoMesh, callback) {
       
       var f = this.Frequency
@@ -79,7 +133,22 @@ define(
         
       }
       
+      var addSpace = function(node) {
+        var neighbors = nodeNeighbors(node)
+      }
+      
+      for (var u = 0; u < u_array.length; u += 1) {
+        var v_array = u_array[u]
+        for (var v = 0; v < v_array.length; v += 1) {
+          var node = v_array[v]
+          if (node) {
+            
+          }
+        }
+      }
+      
       // For each "major square"
+      //TODO: each major square is its own mesh; webgl max buffer size
       for (var i = 0; i < 5; i += 1) {
         for (var j = 0; j < 2; j += 1) {
           var anchor_u = (i+j) * f;
@@ -128,6 +197,7 @@ define(
     function initGeodesic(obj) {
       
       obj.generateMesh = generateMesh
+      obj.nodeNeighbors = nodeNeighbors(obj)
       
       return obj
       

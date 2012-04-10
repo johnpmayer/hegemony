@@ -48,7 +48,7 @@ func fragmentShaderHandler(ctx *web.Context, path string) {
 
 func main() {
 
-	globe := geodesic.MakeGeodesic(1, 4)
+	globe := geodesic.MakeGeodesic(1, 3)
 
 	globeHandler := func(ctx *web.Context) {
 

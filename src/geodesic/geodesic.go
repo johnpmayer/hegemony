@@ -286,7 +286,7 @@ func (p *Geodesic) doubleFrequency() {
 			node1 := v_array[v]
 			node2 := v_array[v+2]
 			if node1 != nil && node2 != nil {
-				node := interpolate(f, u, v, v_array[v], v_array[v+2])
+				node := interpolate(f, u, v+1, v_array[v], v_array[v+2])
 				v_array[v+1] = node
 			}
 		}
@@ -313,7 +313,10 @@ func (p *Geodesic) doubleFrequency() {
 		for v := 0; v+2 < v_len; v += 2 {
 			node1 := v_array_a[v]
 			node2 := v_array_b[v+2]
-			if node1 != nil && node2 != nil {
+			testNode1 := v_array_a[v+2]
+			testNode2 := v_array_b[v]
+			if testNode1 != nil && testNode2 != nil && 
+				node1 != nil && node2 != nil {
 
 				node := interpolate(f, u+1, v+1, node1, node2)
 				u_array[u+1][v+1] = node

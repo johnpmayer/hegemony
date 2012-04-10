@@ -74,18 +74,13 @@ require(
         var center = new vector.Vector3(0,0,0).toMJS()
         var up = new vector.Vector3(0,1,0).toMJS()
         
-        log += "<br>Eye: " + JSON.stringify(eye)
-        log += "<br>Center: " + JSON.stringify(center)
-        log += "<br>Up: " + JSON.stringify(up)
+        // log += "<br>Eye: " + JSON.stringify(eye)
+        // log += "<br>Center: " + JSON.stringify(center)
+        // log += "<br>Up: " + JSON.stringify(up)
         
         matrix.viewMatrix().fromMJS(mjs.M4x4.makeLookAt(eye, center, up))
         
         geoScene.draw();
-        
-        log += "<br>Camera:"+camera.d[12]
-          +","+camera.d[13]
-          +","+camera.d[14]
-          +"<br>"+JSON.stringify(camera.d)
         
         $("#camera_log").html(log)
         
@@ -105,6 +100,27 @@ require(
       utils.loadFile("globe", 
                      function(responseText){
                        var geo = geodesic.initGeodesic(JSON.parse(responseText))
+                       
+                       var count = 0
+                       var neighborFreq = [0,0,0,0,0,0,0,0,0]
+                       
+                       for (var u = 0; u < geo.U_Array.length; u += 1) {
+                         var v_array = geo.U_Array[u]
+                         for (var v = 0; v < v_array.length; v += 1) {
+                           var node = v_array[v]
+                           if (node && 
+                               node.Locations[0].U === u &&
+                               node.Locations[0].V === v) {
+                             count += 1
+                             var numNeighbors = geo.nodeNeighbors(node).length
+
+                             neighborFreq[numNeighbors] += 1
+                           }
+                         }
+                       }
+                       
+                       alert(count + " " + neighborFreq)
+                       
                        geo.generateMesh(geoMesh,draw)
                      },
                      true,true);

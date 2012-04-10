@@ -22,7 +22,7 @@ define(["mjs"], function(mjs) {
     },
     
     dot : function(vec2) {
-      return this.x * vec.x + this.y * vec2.y + this.z * vec2.z;
+      return this.x * vec2.x + this.y * vec2.y + this.z * vec2.z;
     },
     
     cross : function(vec2) {

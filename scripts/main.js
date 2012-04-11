@@ -72,11 +72,7 @@ require(
         
         var eye = vector.fromSpherical(zoom, theta, phi).toMJS()
         var center = new vector.Vector3(0,0,0).toMJS()
-        var up = new vector.Vector3(0,1,0).toMJS()
-        
-        // log += "<br>Eye: " + JSON.stringify(eye)
-        // log += "<br>Center: " + JSON.stringify(center)
-        // log += "<br>Up: " + JSON.stringify(up)
+        var up = vector.fromSpherical(1, theta, phi + (Math.PI / 2)).toMJS()
         
         matrix.viewMatrix().fromMJS(mjs.M4x4.makeLookAt(eye, center, up))
         
@@ -85,17 +81,6 @@ require(
         $("#camera_log").html(log)
         
       }
-      
-      $("#c").click(function(ev){
-        
-        var log = "Clicked the canvas: " + ev.offsetX + " " + ev.offsetY
-        
-        var xRatio = (ev.offsetX / 600) * 2 - 1
-        var yRatio = 1 - (ev.offsetY / 600) * 2
-        
-        $("#mouse_log").html(log)
-        
-      })
       
       utils.loadFile("globe", 
                      function(responseText){
@@ -119,7 +104,70 @@ require(
                          }
                        }
                        
-                       alert(count + " " + neighborFreq)
+                       $("#c").click(function(ev){
+                         
+                         var log = "Clicked the canvas: " + ev.offsetX + " " + ev.offsetY
+                         
+                         // canvas specific
+                         var fsx = ev.offsetX / 600
+                         var fsy = ev.offsetY / 600
+                         
+                         var cameraPos = vector.fromSpherical(zoom, theta, phi)
+                         var upVector = vector.fromSpherical(1, theta, phi + (Math.PI / 2))
+                         var viewingDir = cameraPos.scale(-1).normalize()
+                         
+                         var halfViewAngle = Math.PI / 8
+                         
+                         var a = viewingDir.cross(upVector).normalize()
+                         var b = a.cross(viewingDir).normalize()
+                         var m = cameraPos.add(viewingDir)
+                         
+                         var h = a.scale(viewingDir.magnitude()).scale(halfViewAngle)
+                         var v = b.scale(viewingDir.magnitude()).scale(halfViewAngle)
+                         var p = m.add(h.scale(2*fsx - 1)).sub(v.scale(2*fsy - 1))
+                         
+                         var pcp = p.sub(cameraPos)
+                         var ray = pcp.normalize()
+                         
+                         // now we found the ray
+                         
+                         var s = new vector.Vector3(0,0,0)
+                         var r = 1
+                         var dx = ray
+                         
+                         var c = s.sub(cameraPos)
+                         var v = dx.dot(c)
+                         var bSquared = c.dot(c) - v*v
+                         var discriminant = r * r - bSquared
+                         
+                         if (discriminant > 0) {
+                           
+                           console.log("hit")
+                           
+                           var t = v - Math.sqrt(discriminant)
+                           var intersect = cameraPos.add(dx.scale(t))
+                           
+                           log += "<br>Hit: " + JSON.stringify(intersect)
+                           
+                           var closestNode = geo.closestNode(intersect)
+                           
+                           log += "<br>Node: " + JSON.stringify(closestNode)
+                           
+                         } else {
+                           
+                           console.log("miss")
+                           
+                         }
+                         
+                         //        log += "<br>Eye: " + JSON.stringify(cameraPos)
+                         //        log += "<br>Ray: " + JSON.stringify(ray)
+                         
+                         $("#mouse_log").html(log)
+                         
+                       })
+                       
+                       
+                       //alert(count + " " + neighborFreq)
                        
                        geo.generateMesh(geoMesh,draw)
                      },

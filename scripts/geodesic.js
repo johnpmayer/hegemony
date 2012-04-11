@@ -24,6 +24,45 @@ define(
       return false
     }
     
+    function closestNode(testVec) {
+      
+      var geo = this
+      var u_array = geo.U_Array
+      
+      var node = u_array[0][0]
+      var vec = vector.convert(node.Point)
+      var dist = testVec.sub(vec).magnitude()
+      
+      while(true) {
+        
+        var neighbors = geo.nodeNeighbors(node)
+        var better = false;
+        
+        for (var i = 0; i < neighbors.length; i++) {
+          
+          var node2 = neighbors[i]
+          var vec2 = vector.convert(node2.Point)
+          var dist2 = testVec.sub(vec2).magnitude()
+          
+          if (dist2 < dist) {
+            node = node2;
+            dist = dist2;
+            better = true;
+            break;
+          }
+          
+        }
+        
+        if(!better) {
+          break
+        }
+        
+      }
+      
+      return node;
+      
+    }
+    
     function nodeNeighbors(that){ 
       return function(node) {
         var neighbors = []
@@ -369,6 +408,7 @@ define(
       
       obj.generateMesh = generateHexagonMesh
       obj.nodeNeighbors = nodeNeighbors(obj)
+      obj.closestNode = closestNode
       
       return obj
       

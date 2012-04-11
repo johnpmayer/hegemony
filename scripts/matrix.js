@@ -178,7 +178,7 @@ define(["vector"],function(vector) {
                 0,0,D,0);
       return this;
     },
-
+    
     multiply : function(m) {
       
       var result = new Float32Array(16);

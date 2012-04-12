@@ -8,6 +8,8 @@ define(
     var deepLevel = 300;
     var seaLevel = 650;
     var mtnLevel = 900;
+
+    var scaleFactor = 1.02
     
     function canonicalEquals(node1, node2) {
       var l1 = node1.Locations[0]
@@ -116,7 +118,147 @@ define(
       }
       
     }
+    
+    function generateBorderMesh(borderMesh, node, callback) {
+      
+      var vertexPositions = [];
+      var indices = [];
+      var vertexNormals = [];
+      var vertexColors = [];
+      
+      var indexCounter = 0;
+      
+      var addVertex = function(l,v) {
+        l.push(v.x);
+        l.push(v.y);
+        l.push(v.z);
+      }
+      
+      var addColor = function() {
+        vertexColors.push(1.0)
+        vertexColors.push(0.0)
+        vertexColors.push(0.0)
+      }
+      
+      var addTriangle = function(v1,v2,v3) {
+        var a = v3.sub(v1);
+        var b = v2.sub(v1);
+        var norm = a.cross(b).normalize();
         
+        addVertex(vertexPositions, v1);
+        addVertex(vertexPositions, v2);
+        addVertex(vertexPositions, v3);
+        
+        for (var i = 0; i < 3; i++) {
+          indices.push(indexCounter);
+          indexCounter += 1;
+          addVertex(vertexNormals, norm);
+        }
+        
+      }
+      
+      var neighbors = this.nodeNeighbors(node)
+      
+      var elevation = node.Elevation
+      var vc = vector.convert(node.Point)
+      
+      var sortedNeighborVertices = []
+      
+      var sortedNeighbors = []
+      
+      var node1 = neighbors.pop()
+      sortedNeighbors.push(node1)
+      lastNodeNeighbors = this.nodeNeighbors(node1)
+      var vn1 = vector.convert(node1.Point)
+      var vsub = vc.sub(vn1)
+      var vcross = vsub.cross(vc)
+      
+      while(neighbors.length > 0) {
+        
+        node2 = neighbors.pop()
+        
+        if (containsNode(lastNodeNeighbors, node2)) {
+          
+          var vn2 = vector.convert(node2.Point)
+          
+          if (vcross.dot(vn2) > 0) {
+            
+            node1 = node2
+            sortedNeighbors.push(node1)
+            lastNodeNeighbors = this.nodeNeighbors(node1)
+            vn1 = vector.convert(node1.Point)
+            vsub = vc.sub(vn1)
+            vcross = vsub.cross(vc)
+            
+            continue
+            
+          }
+          
+        }
+        
+        neighbors.unshift(node2)
+        
+      }
+      
+      var neighborVertices = []
+      
+      for (var i = 0; i < sortedNeighbors.length; i += 1) {
+        neighborVertices.push(vector.convert(sortedNeighbors[i].Point))
+      }
+      
+      var gameSpaceVertices = []
+      
+      for (var i = 0; i < neighborVertices.length; i += 1) {
+        v1 = vector.convert(node.Point)
+        v2 = neighborVertices[i]
+        v3 = neighborVertices[(i+1)%neighborVertices.length]
+        
+        var x = (v1.x + v2.x + v3.x) / 3
+        var y = (v1.y + v2.y + v3.y) / 3
+        var z = (v1.z + v2.z + v3.z) / 3
+        
+        gameSpaceVertices.push((new vector.Vector3(x,y,z)).normalize())
+        
+      }
+      
+      for (var i = 0; i < gameSpaceVertices.length; i += 1) {
+        //v1 = vector.convert(node.Point)
+        v2 = gameSpaceVertices[i]
+        v3 = gameSpaceVertices[(i+1) % gameSpaceVertices.length]
+        
+        v2a = v2.scale(scaleFactor)
+        v3a = v3.scale(scaleFactor)
+        
+        addTriangle(v2, v3, v2a)
+        addTriangle(v3, v2a, v3a)
+        
+        for (var j = 0; j < 6; j ++) {
+          addColor()
+        }
+        
+      }
+      
+      var meshAttributes = {
+        
+        vertexPositions : vertexPositions,
+        indices : indices,
+        vertexNormals : vertexNormals,
+        vertexColors : vertexColors,
+        
+        materials : [{
+          
+          vertexshader : "shaders/border.vert",
+          fragmentshader : "shaders/border.frag",
+          numindices : indices.length
+          
+        }]
+        
+      }
+      
+      borderMesh.build(meshAttributes, callback)
+      
+    }
+    
     function generateHexagonMesh(geoMesh, callback) {
       
       var f = this.Frequency
@@ -175,7 +317,7 @@ define(
       var that = this
       
       var addGameSpace = function(node) {
-        neighbors = that.nodeNeighbors(node)
+        var neighbors = that.nodeNeighbors(node)
         
         var elevation = node.Elevation
         var vc = vector.convert(node.Point)
@@ -407,6 +549,7 @@ define(
     function initGeodesic(obj) {
       
       obj.generateMesh = generateHexagonMesh
+      obj.generateBorderMesh = generateBorderMesh
       obj.nodeNeighbors = nodeNeighbors(obj)
       obj.closestNode = closestNode
       

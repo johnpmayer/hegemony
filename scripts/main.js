@@ -151,6 +151,14 @@ require(
                            
                            var closestNode = geo.closestNode(intersect)
                            
+                           console.log(geoScene.children)
+                           
+                           var borderMesh = new mesh.Mesh(gl)
+                           
+                           geo.generateBorderMesh(borderMesh, closestNode, function(){
+                             geoScene.children.push(new scene.Geometry(borderMesh))
+                           })
+                           m
                            log += "<br>Node: " + JSON.stringify(closestNode)
                            
                          } else {
@@ -165,7 +173,6 @@ require(
                          $("#mouse_log").html(log)
                          
                        })
-                       
                        
                        //alert(count + " " + neighborFreq)
                        
